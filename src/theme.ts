@@ -1,0 +1,1 @@
+export const color = { yellow: "#ffd700" };

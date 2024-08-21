@@ -1,9 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/Header.tsx";
-import Footer from "./components/Footer.tsx";
-import Home from "./components/Home.tsx";
-import HowToPlay from "./components/HowToPlay.tsx";
-import Stratagems from "./components/Stratagems.tsx";
+import Header from "./components/pages/Header.tsx";
+import Home from "./components/pages/Home.tsx";
+import HowToPlay from "./components/pages/HowToPlay.tsx";
+import Stratagems from "./components/pages/Stratagems.tsx";
 
 function App() {
   return (
@@ -14,7 +13,6 @@ function App() {
         <Route path="/how-to-play" element={<HowToPlay />}></Route>
         <Route path="/stratagems" element={<Stratagems />}></Route>
       </Routes>
-      <Footer />
     </BrowserRouter>
   );
 }

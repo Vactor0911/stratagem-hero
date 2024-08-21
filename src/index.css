@@ -1,18 +1,26 @@
 @font-face {
-    font-family: "FS-Sinclair";
-    src: url("./assets/fonts/FS_Sinclair_Medium.otf") format("opentype");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "FS-Sinclair";
+  src: url("./assets/fonts/FS_Sinclair_Medium.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (max-width: 740px) {
+  body {
+    background: "red";
+  }
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "FS-Sinclair", 'Courier New', Courier, monospace;
+  font-family: "FS-Sinclair", "Courier New", Courier, monospace;
   user-select: none;
+  color: white;
 }
 
 body {
   background: #252525;
+  height: 100vh;
 }
