@@ -4,6 +4,59 @@ import { color } from "../../theme";
 import GithubButton from "../GithubButton";
 import { useState } from "react";
 
+const RightMenu = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: absolute;
+  gap: 1rem;
+  right: 0.5rem;
+  top: 0.5rem;
+`;
+
+const HambergerMenu = styled.div`
+  display: none;
+  padding: 0.75rem 0.75rem;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 4rem;
+  height: 3rem;
+  border: 1px solid white;
+  border-radius: 0.25rem;
+  cursor: pointer;
+
+  span {
+    height: 0.2rem;
+    width: 100%;
+    background-color: white;
+    border-radius: 10px;
+  }
+`;
+
+const Ul = styled.ul`
+  display: flex;
+  gap: 1.5rem;
+
+  li {
+    list-style: none;
+  }
+`;
+
+const MyLink = styled(Link)`
+  display: flex;
+  align-items: center;
+`;
+
+const MyNavLink = styled(NavLink)`
+  font-size: 1.25rem;
+  text-decoration: none;
+  text-transform: uppercase;
+
+  &:hover {
+    color: ${color.yellow};
+  }
+`;
+
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -15,6 +68,11 @@ const Header = () => {
     padding: 0.5rem;
     border-bottom: 2px solid ${color.yellow};
     gap: 1rem;
+    background: #252525;
+
+    .active {
+      color: ${color.yellow};
+    }
 
     @media (max-width: 700px) {
       flex-direction: column;
@@ -28,6 +86,16 @@ const Header = () => {
         display: ${menuOpen ? "flex" : "none"};
         flex-direction: column;
         width: 100%;
+        padding: 0.5rem 0;
+        position: absolute;
+        left: 0;
+        top: calc(50px + 1rem - 2px);
+        background: #252525;
+        border-bottom: 2px solid ${color.yellow};
+      }
+
+      ul.open {
+        display: flex;
       }
 
       ul li {
@@ -35,59 +103,6 @@ const Header = () => {
         width: 100%;
         text-align: center;
       }
-    }
-  `;
-
-  const RightMenu = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: absolute;
-    gap: 1rem;
-    right: 0.5rem;
-    top: 0.5rem;
-  `;
-
-  const HambergerMenu = styled.div`
-    display: none;
-    padding: 0.75rem 0.75rem;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 4rem;
-    height: 3rem;
-    border: 1px solid white;
-    border-radius: 0.25rem;
-    cursor: pointer;
-
-    span {
-      height: 0.2rem;
-      width: 100%;
-      background-color: white;
-      border-radius: 10px;
-    }
-  `;
-
-  const Ul = styled.ul`
-    display: flex;
-    gap: 1.5rem;
-
-    li {
-      list-style: none;
-    }
-  `;
-
-  const MyLink = styled(Link)`
-    display: flex;
-    align-items: center;
-  `;
-
-  const MyNavLink = styled(NavLink)`
-    font-size: 1.25rem;
-    text-decoration: none;
-    text-transform: uppercase;
-
-    &:hover {
-      color: ${color.yellow};
     }
   `;
 
