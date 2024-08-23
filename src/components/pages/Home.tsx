@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { useState } from "react";
-import { color } from "../../theme";
 import Main from "../scenes/Main";
 import Ready from "../scenes/Ready";
 import Clear from "../scenes/Clear";
+import GameOver from "../scenes/GameOver";
+import Game from "../scenes/Game";
 
 const Container = styled.div`
   height: calc(100% - 52px - 1rem);
@@ -11,21 +12,21 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media (max-width: 1000px) or (max-height: 700px) {
+  @media (max-width: 1000px) or (max-height: 750px) {
     font-size: 0.75em;
   }
-  @media (max-width: 750px) or (max-height: 500px) {
+  @media (max-width: 750px) or (max-height: 600px) {
     font-size: 0.5em;
   }
-    @media (max-width: 500px) or (max-height: 360px) {
-    font-size: 0.35em;
+  @media (max-width: 500px) or (max-height: 450px) {
+    font-size: 0.3em;
   }
 `;
 
 const Background = styled.div`
   width: 100%;
   height: 80%;
-  padding: 10vh 0;
+  padding: 7vh 0;
   border: solid white;
   border-width: 5px 0;
   display: flex;
@@ -44,11 +45,18 @@ const Background = styled.div`
 `;
 
 const Home = () => {
-  const [gameStep, setGameStep] = useState("main");
+  const [gameStep, setGameStep] = useState("game");
   const [gameStage, setGameStage] = useState(1);
 
   const getReady = () => {
+    if (gameStep !== "main") {
+      return;
+    }
+
     setGameStep("ready");
+    setInterval(() => {
+
+    });
   };
 
   return (
@@ -57,6 +65,8 @@ const Home = () => {
         {gameStep === "main" && <Main />}
         {gameStep === "ready" && <Ready />}
         {gameStep === "clear" && <Clear />}
+        {gameStep === "gameover" && <GameOver />}
+        {gameStep === "game" && <Game />}
       </Background>
     </Container>
   );

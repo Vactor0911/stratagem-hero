@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { useState, useEffect, useRef } from "react";
 import { color } from "../../theme";
 
 const Style = styled.div`
@@ -15,7 +16,6 @@ const Container = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  opacity: 0;
 
   .score {
     color: ${color.yellow};
@@ -28,22 +28,38 @@ const Container = styled.div`
 `;
 
 const Clear = () => {
+  const [loop, setLoop] = useState(0);
+  const intervalId = useRef<number | null>(null);
+  useEffect(() => {
+    console.log("useEffect"); // 출력용
+    intervalId.current = setInterval(() => {
+      console.log(loop); // 출력용
+      setLoop((l: number) => l + 1);
+      if (loop > 4 && intervalId.current) {
+        clearInterval(intervalId.current);
+      }
+    }, 500);
+    return () => {
+      if (!intervalId.current) return;
+      clearInterval(intervalId.current);
+    };
+  }, [loop]);
 
   return (
     <Style>
-      <Container>
+      <Container style={{ opacity: loop >= 1 ? "1" : "0" }}>
         <h1>Round Bonus</h1>
         <h1 className="score">100</h1>
       </Container>
-      <Container>
+      <Container style={{ opacity: loop >= 2 ? "1" : "0" }}>
         <h1>Time Bonus</h1>
         <h1 className="score">100</h1>
       </Container>
-      <Container>
+      <Container style={{ opacity: loop >= 3 ? "1" : "0" }}>
         <h1>Perfect Bonus</h1>
         <h1 className="score">100</h1>
       </Container>
-      <Container>
+      <Container style={{ opacity: loop >= 4 ? "1" : "0" }}>
         <h1>Total Bonus</h1>
         <h1 className="score">100</h1>
       </Container>
