@@ -6,47 +6,78 @@ const Style = styled.div`
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
-  height: 100%;
+  width: 90%;
+
+  img {
+    aspect-ratio: 1;
+  }
 
   .screen {
     display: flex;
     justify-content: space-between;
-    width: 90%;
+    width: 100%;
+  }
+
+  .side-container {
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+      color: ${color.yellow};
+      font-size: 4em;
+    }
+
+    h2 {
+      font-size: 3em;
+    }
   }
 
   .main-container {
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
+    width: 70%;
+  }
+
+  .left-container {
+    text-align: left;
+    justify-content: space-between;
+
+    div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .score {
+      display: none;
+      text-align: right;
+    }
+  }
+
+  .right-container {
+    text-align: right;
   }
 
   .stratagems {
     display: flex;
-    justify-content: center;
     align-items: center;
+    width: 100%;
   }
 
-  .stratagems img {
-    width: max(25%, 10vh);
+  .stratagems > img {
+    width: 25%;
+    height: auto;
+    border: 5px solid ${color.yellow};
   }
 
   .next-stratagems {
-    list-style: none;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    list-style: none;
     width: 75%;
     height: 50%;
   }
 
-  .next-stratagems li {
-    height: 100%;
-  }
-
   .next-stratagems img {
     width: 100%;
-    height: 100%;
   }
 
   .stratagem-name {
@@ -59,104 +90,108 @@ const Style = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 1rem 0;
   }
 
   .commands img {
-    height: 5vw;
+    width: 10%;
   }
 
-  .timer{
+  .timer {
     background-color: ${color.gray};
-    height: 2em;
+    height: 3em;
   }
 
-  @media (max-width: 767px) {
+  // 세로모드 모바일
+  @media (max-width: 575px) {
     .screen {
       flex-direction: column;
-      align-items: center;
     }
-  }
-`;
 
-const LeftContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  text-align: left;
+    .main-container {
+      width: 100%;
+    }
 
-  div {
-    display: flex;
-    flex-direction: column;
-  }
+    .left-container {
+      flex-direction: row;
+      width: 100%;
+    }
 
-  .score {
-    display: none;
-    text-align: right;
-  }
-
-  h1 {
-    font-size: 4em;
-    color: ${color.yellow};
-  }
-
-  h2 {
-    font-size: 3em;
-  }
-
-  @media (max-width: 767px) {
-    width: 100%;
-    margin-bottom: 1rem;
-
-    .score {
+    .left-container .score {
       display: flex;
     }
+
+    .right-container {
+      display: none;
+    }
+
+    .stratagems > img {
+      border: 3px solid ${color.yellow};
+    }
+
+    .arrow-buttons {
+      display: grid;
+    }
+  }
+
+  // 가로모드 모바일
+  @media (min-width: 576px) and (max-width: 767px) {
+    .main-container {
+      height: 100%;
+    }
+
+    .stratagems {
+      height: 50%;
+    }
+
+    .stratagems > img {
+      height: 100%;
+    }
+  }
+
+  // 태블릿
+  @media (min-width: 768px) and (max-width: 991px) {
+  }
+
+  // 데스크탑
+  @media (min-width: 992px) {
   }
 `;
 
-const RightContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  text-align: right;
-
-  h1 {
-    font-size: 4em;
-    color: ${color.yellow};
-  }
-
-  h2 {
-    font-size: 3em;
-  }
-
-  @media (max-width: 767px) {
-    display: none;
-  }
-`;
-
-const ArrowContainer = styled.div`
+const ArrowButtons = styled.div`
   display: none;
-  position: absolute;
-  bottom: 0;
+  width: 80%;
   grid-template-columns: repeat(3, 1fr);
   grid-template-rows: repeat(2, 1fr);
 
-  img:nth-child(1) {
+  div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5px;
+    border: 3px solid white;
+    border-radius: 1em;
+    background-color: ${color.yellow};
+    cursor: pointer;
+  }
+
+  img {
+    filter: invert(85%);
+  }
+
+  div:nth-child(1) {
     grid-column: 2;
   }
-  img:nth-child(2) {
+  div:nth-child(2) {
     grid-row: 2;
     grid-column: 1;
   }
-  img:nth-child(3) {
+  div:nth-child(3) {
     grid-row: 2;
     grid-column: 2;
   }
-  img:nth-child(4) {
+  div:nth-child(4) {
     grid-row: 2;
     grid-column: 3;
-  }
-
-  @media (max-width: 767px) {
-    display: grid;
   }
 `;
 
@@ -208,8 +243,10 @@ const commands = aryStratagem[0].command.split("").map((char, index) => {
 const Game = () => {
   return (
     <Style>
+      {/* 메인 화면 */}
       <div className="screen">
-        <LeftContainer>
+        {/* 좌측 컨테이너 */}
+        <div className="side-container left-container">
           <div className="round">
             <h2>Round</h2>
             <h1>1</h1>
@@ -218,8 +255,11 @@ const Game = () => {
             <h1>0</h1>
             <h2>SCORE</h2>
           </div>
-        </LeftContainer>
+        </div>
+
+        {/* 메인 컨테이너 */}
         <div className="main-container">
+          {/* 스트라타젬 이미지 */}
           <div className="stratagems">
             <img
               src="./src/assets/stratagems/hellbomb.png"
@@ -227,22 +267,34 @@ const Game = () => {
             />
             <ul className="next-stratagems">{nextStratagems}</ul>
           </div>
+
           <h1 className="stratagem-name">Hellbomb</h1>
           <div className="commands">{commands}</div>
           <div className="timer"></div>
         </div>
-        <RightContainer>
+
+        {/* 우측 컨테이너 */}
+        <div className="side-container right-container">
           <h1>0</h1>
           <h2>SCORE</h2>
-        </RightContainer>
+        </div>
       </div>
-      <ArrowContainer>
-        {/* 모바일 사용자용 입력 버튼 */}
-        <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-        <img src="./src/assets/arrows/arrow_left.png" alt="arrow_left" />
-        <img src="./src/assets/arrows/arrow_down.png" alt="arrow_down" />
-        <img src="./src/assets/arrows/arrow_right.png" alt="arrow_right" />
-      </ArrowContainer>
+
+      {/* 모바일 사용자용 입력 버튼 */}
+      <ArrowButtons className="arrow-buttons">
+        <div>
+          <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+        </div>
+        <div>
+          <img src="./src/assets/arrows/arrow_left.png" alt="arrow_left" />
+        </div>
+        <div>
+          <img src="./src/assets/arrows/arrow_down.png" alt="arrow_down" />
+        </div>
+        <div>
+          <img src="./src/assets/arrows/arrow_right.png" alt="arrow_right" />
+        </div>
+      </ArrowButtons>
     </Style>
   );
 };

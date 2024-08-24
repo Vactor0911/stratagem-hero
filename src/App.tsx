@@ -1,8 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Header from "./components/pages/Header.tsx";
-import Home from "./components/pages/Home.tsx";
-import HowToPlay from "./components/pages/HowToPlay.tsx";
-import Stratagems from "./components/pages/Stratagems.tsx";
+import Header from "./pages/Header.tsx";
+import Home from "./pages/Home.tsx";
+import HowToPlay from "./pages/HowToPlay.tsx";
+import Stratagems from "./pages/Stratagems.tsx";
 
 function App() {
   return (

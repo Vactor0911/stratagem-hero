@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { useState } from "react";
-import Main from "../scenes/Main";
-import Ready from "../scenes/Ready";
-import Clear from "../scenes/Clear";
-import GameOver from "../scenes/GameOver";
-import Game from "../scenes/Game";
+import Main from "../components/scenes/Main";
+import Ready from "../components/scenes/Ready";
+import Clear from "../components/scenes/Clear";
+import GameOver from "../components/scenes/GameOver";
+import Game from "../components/scenes/Game";
 
 const Container = styled.div`
   height: calc(100% - 52px - 1rem);
