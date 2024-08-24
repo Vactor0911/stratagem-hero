@@ -102,7 +102,7 @@ const Style = styled.div`
   }
 
   // 세로모드 모바일
-  @media (max-width: 575px) {
+  @media (max-width: 991px) and (orientation: portrait) {
     .screen {
       flex-direction: column;
     }
@@ -134,7 +134,18 @@ const Style = styled.div`
   }
 
   // 가로모드 모바일
-  @media (min-width: 576px) and (max-width: 767px) {
+  @media (max-width: 991px) and (orientation: landscape) {
+    flex-direction: row;
+    gap: 5%;
+
+    .left-container .score {
+      display: flex;
+    }
+
+    .right-container {
+      display: none;
+    }
+
     .main-container {
       height: 100%;
     }
@@ -146,14 +157,11 @@ const Style = styled.div`
     .stratagems > img {
       height: 100%;
     }
-  }
 
-  // 태블릿
-  @media (min-width: 768px) and (max-width: 991px) {
-  }
-
-  // 데스크탑
-  @media (min-width: 992px) {
+    .arrow-buttons {
+      display: grid;
+      width: 50%;
+    }
   }
 `;
 
