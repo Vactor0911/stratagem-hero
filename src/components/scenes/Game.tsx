@@ -7,6 +7,7 @@ const Style = styled.div`
   justify-content: space-between;
   align-items: center;
   width: 90%;
+  height: 100%;
 
   img {
     aspect-ratio: 1;
@@ -62,8 +63,7 @@ const Style = styled.div`
   }
 
   .stratagems > img {
-    width: 25%;
-    height: auto;
+    width: min(25%, 30vh);
     border: 5px solid ${color.yellow};
   }
 
@@ -77,7 +77,7 @@ const Style = styled.div`
   }
 
   .next-stratagems img {
-    width: 100%;
+    width: min(100%, 15vh);
   }
 
   .stratagem-name {
@@ -93,7 +93,7 @@ const Style = styled.div`
   }
 
   .commands img {
-    width: 10%;
+    width: min(10%, 10vh);
   }
 
   .timer {
@@ -167,7 +167,7 @@ const ArrowButtons = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 5px;
+    margin: 5%;
     border: 3px solid white;
     border-radius: 1em;
     background-color: ${color.yellow};
@@ -176,6 +176,7 @@ const ArrowButtons = styled.div`
 
   img {
     filter: invert(85%);
+    width: 80%;
   }
 
   div:nth-child(1) {
