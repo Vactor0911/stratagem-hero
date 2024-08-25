@@ -90,6 +90,7 @@ const Style = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 2%;
   }
 
   .commands img {

@@ -45,7 +45,7 @@ const Background = styled.div`
 `;
 
 const Home = () => {
-  const [gameStep, setGameStep] = useState("game");
+  const [gameStep, setGameStep] = useState("main");
   const [gameStage, setGameStage] = useState(1);
 
   const getReady = () => {
@@ -54,9 +54,10 @@ const Home = () => {
     }
 
     setGameStep("ready");
-    setInterval(() => {
-
-    });
+    const timer = setInterval(() => {
+      setGameStep("game");
+      clearInterval(timer);
+    }, 3000);
   };
 
   return (
