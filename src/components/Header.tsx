@@ -1,7 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { color } from "../theme";
-import GithubButton from "../components/GithubButton";
+import GithubButton from "./GithubButton";
 import { useState } from "react";
 
 const RightMenu = styled.div`
