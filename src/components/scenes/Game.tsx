@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { color } from "../../theme";
+import { useState, useEffect } from "react";
 
 const Style = styled.div`
   display: flex;
@@ -100,6 +101,12 @@ const Style = styled.div`
   .timer {
     background-color: ${color.gray};
     height: 3em;
+  }
+
+  .timer #timeLeft {
+    width: 100%;
+    height: 100%;
+    background-color: ${color.yellow};
   }
 
   // 세로모드 모바일
@@ -250,7 +257,41 @@ const commands = aryStratagem[0].command.split("").map((char, index) => {
   );
 });
 
-const Game = () => {
+type GameProps = {
+  setGameScene: (scene: string) => void;
+  setGameRound: (round: number) => void;
+  gameRound: number;
+  gameScore: number;
+  setGameScore: (score: number) => void;
+};
+
+const Game = ({
+  setGameScene,
+  setGameRound,
+  gameRound,
+  gameScore,
+  setGameScore,
+}: GameProps) => {
+  const totalTime = 10000;
+  const interval = 10;
+  const [time, setTime] = useState(totalTime);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime((t) => t - interval);
+      document.getElementById("timeLeft")!.style.width = `${
+        (time / totalTime) * 100
+      }%`;
+    }, interval);
+
+    if (time <= 0) {
+      clearInterval(timer);
+      setGameScene("gameover");
+    }
+
+    return () => clearInterval(timer);
+  }, [setGameScene, time]);
+
   return (
     <Style>
       {/* 메인 화면 */}
@@ -259,7 +300,7 @@ const Game = () => {
         <div className="side-container left-container">
           <div className="round">
             <h2>Round</h2>
-            <h1>1</h1>
+            <h1>{gameRound}</h1>
           </div>
           <div className="score">
             <h1>0</h1>
@@ -280,12 +321,14 @@ const Game = () => {
 
           <h1 className="stratagem-name">Hellbomb</h1>
           <div className="commands">{commands}</div>
-          <div className="timer"></div>
+          <div className="timer">
+            <div id="timeLeft"></div>
+          </div>
         </div>
 
         {/* 우측 컨테이너 */}
         <div className="side-container right-container">
-          <h1>0</h1>
+          <h1>{gameScore}</h1>
           <h2>SCORE</h2>
         </div>
       </div>

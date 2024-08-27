@@ -27,7 +27,11 @@ const Container = styled.div`
   }
 `;
 
-const Clear = () => {
+type GameProps = {
+  gameRound: number;
+};
+
+const Clear = ({ gameRound }: GameProps) => {
   const [loop, setLoop] = useState(0);
   const intervalId = useRef<number | null>(null);
   useEffect(() => {

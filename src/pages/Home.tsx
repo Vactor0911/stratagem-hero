@@ -1,10 +1,6 @@
 import styled from "styled-components";
 import { useState } from "react";
-import Main from "../components/scenes/Main";
-import Ready from "../components/scenes/Ready";
-import Clear from "../components/scenes/Clear";
-import GameOver from "../components/scenes/GameOver";
-import Game from "../components/scenes/Game";
+import { Main, Ready, Clear, GameOver, Game } from "../components/scenes";
 
 const Container = styled.div`
   height: calc(100% - 52px - 1rem);
@@ -45,17 +41,18 @@ const Background = styled.div`
 `;
 
 const Home = () => {
-  const [gameStep, setGameStep] = useState("main");
-  const [gameStage, setGameStage] = useState(1);
+  const [gameScene, setGameScene] = useState("main");
+  const [gameRound, setGameRound] = useState(1);
+  const [gameScore, setGameScore] = useState(0);
 
   const getReady = () => {
-    if (gameStep !== "main") {
+    if (gameScene !== "main") {
       return;
     }
 
-    setGameStep("ready");
+    setGameScene("ready");
     const timer = setInterval(() => {
-      setGameStep("game");
+      setGameScene("game");
       clearInterval(timer);
     }, 3000);
   };
@@ -63,11 +60,19 @@ const Home = () => {
   return (
     <Container onClick={getReady}>
       <Background>
-        {gameStep === "main" && <Main />}
-        {gameStep === "ready" && <Ready />}
-        {gameStep === "clear" && <Clear />}
-        {gameStep === "gameover" && <GameOver />}
-        {gameStep === "game" && <Game />}
+        {gameScene === "main" && <Main />}
+        {gameScene === "ready" && <Ready gameRound={gameRound} />}
+        {gameScene === "game" && (
+          <Game
+            setGameScene={setGameScene}
+            setGameRound={setGameRound}
+            gameRound={gameRound}
+            gameScore={gameScore}
+            setGameScore={setGameScore}
+          />
+        )}
+        {gameScene === "clear" && <Clear gameRound={gameRound} />}
+        {gameScene === "gameover" && <GameOver setGameScene={setGameScene} gameScore={gameScore} />}
       </Background>
     </Container>
   );

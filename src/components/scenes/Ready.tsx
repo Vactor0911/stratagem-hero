@@ -26,13 +26,17 @@ const Style = styled.div`
   }
 `;
 
-const Ready = () => {
+type GameProps = {
+  gameRound: number;
+};
+
+const Ready = ({ gameRound }: GameProps) => {
   return (
     <Style>
       <h1>GET READY</h1>
       <div>
         <h3>Round</h3>
-        <h2>1</h2>
+        <h2>{gameRound}</h2>
       </div>
     </Style>
   );
