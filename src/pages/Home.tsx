@@ -8,14 +8,19 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media (max-width: 1000px) or (max-height: 750px) {
-    font-size: 0.75em;
+  // 모바일 세로
+  @media all and (max-width: 479px) {
+    font-size: 0.3rem;
   }
-  @media (max-width: 750px) or (max-height: 600px) {
-    font-size: 0.5em;
+
+  // 모바일 가로 & 테블릿 세로
+  @media all and (min-width: 480px) and (max-width: 767px) {
+    font-size: 0.5rem;
   }
-  @media (max-width: 500px) or (max-height: 450px) {
-    font-size: 0.3em;
+
+  // 테블릿 가로
+  @media all and (min-width: 768px) and (max-width: 1023px) {
+    font-size: 0.75rem;
   }
 `;
 
@@ -56,7 +61,9 @@ const Home = () => {
     <Container onClick={getReady}>
       <Background>
         {gameScene === "main" && <Main getReady={getReady} />}
-        {gameScene === "ready" && <Ready gameRound={gameRound} setGameScene={setGameScene} />}
+        {gameScene === "ready" && (
+          <Ready gameRound={gameRound} setGameScene={setGameScene} />
+        )}
         {gameScene === "game" && (
           <Game
             setGameScene={setGameScene}
@@ -67,7 +74,9 @@ const Home = () => {
           />
         )}
         {gameScene === "clear" && <Clear gameRound={gameRound} />}
-        {gameScene === "gameover" && <GameOver setGameScene={setGameScene} gameScore={gameScore} />}
+        {gameScene === "gameover" && (
+          <GameOver setGameScene={setGameScene} gameScore={gameScore} />
+        )}
       </Background>
     </Container>
   );
