@@ -9,10 +9,11 @@ export type Stratagem = {
 
 export const getRandStratagems = (count: number) => {
   const stratagems = stratagemData as Stratagem[];
+  const filteredStratagems = stratagems.filter((stratagem) => stratagem.command !== "" && stratagem.path !== "");
   const result: Stratagem[] = [];
   for (let i = 0; i < count; i++) {
-    const rand = Math.floor(Math.random() * stratagems.length);
-    result.push(stratagems[rand]);
+    const rand = Math.floor(Math.random() * filteredStratagems.length);
+    result.push(filteredStratagems[rand]);
   }
   return result;
 };
