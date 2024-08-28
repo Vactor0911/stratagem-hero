@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { color } from "../../theme";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { Stratagem, getRandStratagems } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -212,51 +213,6 @@ const ArrowButtons = styled.div`
   }
 `;
 
-const aryStratagem = [
-  { name: "Hellbomb", command: "DULDURDU", path: "hellbomb.png" },
-  { name: "Machine Gun", command: "DLDUR", path: "machine_gun.png" },
-  {
-    name: "Autocannon Sentry",
-    command: "DURULU",
-    path: "autocannon_sentry.png",
-  },
-  { name: "Orbital Laser", command: "RDURD", path: "orbital_laser.png" },
-  { name: "Eagle Airstrike", command: "URDR", path: "eagle_airstrike.png" },
-  { name: "Autocannon", command: "DLDUUR", path: "autocannon.png" },
-  { name: "Eagle 500kg Bomb", command: "URDDD", path: "eagle_500kg_bomb.png" },
-];
-
-const nextStratagems = aryStratagem.slice(1, 6).map((stratagem, index) => {
-  return (
-    <li key={index}>
-      <img
-        src={"./src/assets/stratagems/" + stratagem.path}
-        alt={stratagem.name}
-      />
-    </li>
-  );
-});
-
-const commands = aryStratagem[0].command.split("").map((char, index) => {
-  switch (char) {
-    case "U":
-      char = "arrow_up";
-      break;
-    case "D":
-      char = "arrow_down";
-      break;
-    case "L":
-      char = "arrow_left";
-      break;
-    case "R":
-      char = "arrow_right";
-      break;
-  }
-  return (
-    <img src={"./src/assets/arrows/" + char + ".png"} alt={char} key={index} />
-  );
-});
-
 type GameProps = {
   setGameScene: (scene: string) => void;
   setGameRound: (round: number) => void;
@@ -275,7 +231,10 @@ const Game = ({
   const totalTime = 10000;
   const interval = 10;
   const [time, setTime] = useState(totalTime);
+  const [aryStratagem, setAryStratagem] = useState<Stratagem[]>([]);
+  const [stratagemIndex, setStratagemIndex] = useState(0);
 
+  // 타이머
   useEffect(() => {
     const timer = setInterval(() => {
       setTime((t) => t - interval);
@@ -289,8 +248,65 @@ const Game = ({
       setGameScene("gameover");
     }
 
+    // 클리너
     return () => clearInterval(timer);
   }, [setGameScene, time]);
+
+  // 스트라타젬 데이터
+  useEffect(() => {
+    setAryStratagem(getRandStratagems(6));
+    console.log(aryStratagem);
+  }, []);
+
+  const thisStratagemIcon = useMemo(() => {
+    return (
+      <img
+        src={"./src/assets/stratagems/" + aryStratagem[stratagemIndex].path}
+        alt={aryStratagem[stratagemIndex].name}
+      />
+    );
+  }, [aryStratagem, stratagemIndex]);
+
+  const nextStratagems = useMemo(() => {
+    return aryStratagem
+      .slice(stratagemIndex + 1, stratagemIndex + 6)
+      .map((stratagem, index) => {
+        return (
+          <li key={index}>
+            <img
+              src={"./src/assets/stratagems/" + stratagem.path}
+              alt={stratagem.name}
+            />
+          </li>
+        );
+      });
+  }, [aryStratagem, stratagemIndex]);
+
+  const commands = useMemo(() => {
+    return aryStratagem[stratagemIndex].command.split("").map((char, index) => {
+      switch (char) {
+        case "U":
+          char = "arrow_up";
+          break;
+        case "D":
+          char = "arrow_down";
+          break;
+        case "L":
+          char = "arrow_left";
+          break;
+        case "R":
+          char = "arrow_right";
+          break;
+      }
+      return (
+        <img
+          src={"./src/assets/arrows/" + char + ".png"}
+          alt={char}
+          key={index}
+        />
+      );
+    });
+  }, [aryStratagem, stratagemIndex]);
 
   return (
     <Style>
@@ -312,14 +328,13 @@ const Game = ({
         <div className="main-container">
           {/* 스트라타젬 이미지 */}
           <div className="stratagems">
-            <img
-              src="./src/assets/stratagems/hellbomb.png"
-              alt="hellbomb.png"
-            />
+            {thisStratagemIcon}
             <ul className="next-stratagems">{nextStratagems}</ul>
           </div>
 
-          <h1 className="stratagem-name">Hellbomb</h1>
+          <h1 className="stratagem-name">
+            {aryStratagem[stratagemIndex].name}
+          </h1>
           <div className="commands">{commands}</div>
           <div className="timer">
             <div id="timeLeft"></div>
