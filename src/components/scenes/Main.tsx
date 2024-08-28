@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { color } from "../../theme";
+import { useEffect } from "react";
+import { getKeyDirection } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -22,7 +24,25 @@ const Style = styled.div`
   }
 `;
 
-const Main = () => {
+type GameProps = {
+  getReady: () => void;
+};
+
+const Main = ({ getReady }: GameProps) => {
+  const handleKeyDown = (e: { keyCode: number; }) => {
+    if (getKeyDirection(e.keyCode)) {
+      getReady();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <Style>
       <h1>STRATAGEM HERO</h1>

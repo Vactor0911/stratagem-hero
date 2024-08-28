@@ -49,19 +49,14 @@ const Home = () => {
     if (gameScene !== "main") {
       return;
     }
-
     setGameScene("ready");
-    const timer = setInterval(() => {
-      setGameScene("game");
-      clearInterval(timer);
-    }, 3000);
   };
 
   return (
     <Container onClick={getReady}>
       <Background>
-        {gameScene === "main" && <Main />}
-        {gameScene === "ready" && <Ready gameRound={gameRound} />}
+        {gameScene === "main" && <Main getReady={getReady} />}
+        {gameScene === "ready" && <Ready gameRound={gameRound} setGameScene={setGameScene} />}
         {gameScene === "game" && (
           <Game
             setGameScene={setGameScene}

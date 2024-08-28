@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { color } from "../../theme";
+import { useEffect } from "react";
 
 const Style = styled.div`
   display: flex;
@@ -28,9 +29,19 @@ const Style = styled.div`
 
 type GameProps = {
   gameRound: number;
+  setGameScene: (scene: string) => void;
 };
 
-const Ready = ({ gameRound }: GameProps) => {
+const Ready = ({ gameRound, setGameScene }: GameProps) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setGameScene("game");
+      clearTimeout(timer);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Style>
       <h1>GET READY</h1>

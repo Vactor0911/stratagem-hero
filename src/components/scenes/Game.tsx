@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { color } from "../../theme";
-import { useState, useEffect, useMemo } from "react";
-import { Stratagem, getRandStratagems } from "../../utils";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { Stratagem, getKeyDirection, getRandStratagems } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -10,10 +10,6 @@ const Style = styled.div`
   align-items: center;
   width: 90%;
   height: 100%;
-
-  img {
-    aspect-ratio: 1;
-  }
 
   .screen {
     display: flex;
@@ -37,6 +33,7 @@ const Style = styled.div`
 
   .main-container {
     width: 70%;
+    height: 100%;
   }
 
   .left-container {
@@ -62,24 +59,31 @@ const Style = styled.div`
     display: flex;
     align-items: center;
     width: 100%;
+    height: 50%;
   }
 
   .stratagems > img {
     width: min(25%, 30vh);
-    border: 5px solid ${color.yellow};
+  }
+
+  .stratagems > img::before {
+    content: "asd";
   }
 
   .next-stratagems {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     list-style: none;
     width: 75%;
     height: 50%;
   }
 
+  .next-stratagems li {
+    height: 100%;
+  }
+
   .next-stratagems img {
-    width: min(100%, 15vh);
+    height: 100%;
   }
 
   .stratagem-name {
@@ -114,10 +118,12 @@ const Style = styled.div`
   @media (max-width: 991px) and (orientation: portrait) {
     .screen {
       flex-direction: column;
+      justify-content: left;
     }
 
     .main-container {
       width: 100%;
+      height: 45%;
     }
 
     .left-container {
@@ -134,7 +140,11 @@ const Style = styled.div`
     }
 
     .stratagems > img {
-      border: 3px solid ${color.yellow};
+      border-width: 3px;
+    }
+
+    .next-stratagems {
+      justify-content: space-around;
     }
 
     .arrow-buttons {
@@ -146,6 +156,10 @@ const Style = styled.div`
   @media (max-width: 991px) and (orientation: landscape) {
     flex-direction: row;
     gap: 5%;
+
+    .screen {
+      height: 100%;
+    }
 
     .left-container .score {
       display: flex;
@@ -161,10 +175,6 @@ const Style = styled.div`
 
     .stratagems {
       height: 50%;
-    }
-
-    .stratagems > img {
-      height: 100%;
     }
 
     .arrow-buttons {
@@ -228,20 +238,23 @@ const Game = ({
   gameScore,
   setGameScore,
 }: GameProps) => {
-  const totalTime = 10000;
-  const interval = 10;
-  const [time, setTime] = useState(totalTime);
-  const [aryStratagem, setAryStratagem] = useState<Stratagem[]>([]);
-  const [stratagemIndex, setStratagemIndex] = useState(0);
+  const TOTAL_TIME = 10000;
+  const INTERVAL = 10;
+  const [time, setTime] = useState(TOTAL_TIME);
+  const WARNING_TIME = 20;
 
   // 타이머
+  const [timePercentage, setTimePercentage] = useState(100);
   useEffect(() => {
+    const timeLeft = document.getElementById("timeLeft");
     const timer = setInterval(() => {
-      setTime((t) => t - interval);
-      document.getElementById("timeLeft")!.style.width = `${
-        (time / totalTime) * 100
-      }%`;
-    }, interval);
+      // setTime((t) => t - INTERVAL);
+      setTimePercentage((time / TOTAL_TIME) * 100);
+      timeLeft!.style.width = `${timePercentage}%`;
+      timeLeft!.style.backgroundColor = `${
+        timePercentage <= WARNING_TIME ? color.red : color.yellow
+      }`;
+    }, INTERVAL);
 
     if (time <= 0) {
       clearInterval(timer);
@@ -252,61 +265,43 @@ const Game = ({
     return () => clearInterval(timer);
   }, [setGameScene, time]);
 
-  // 스트라타젬 데이터
-  useEffect(() => {
-    setAryStratagem(getRandStratagems(6));
-    console.log(aryStratagem);
-  }, []);
+  // 스트라타젬
+  const [stratagems, setStratagem] = useState(getRandStratagems(gameRound + 5));
 
-  const thisStratagemIcon = useMemo(() => {
-    return (
-      <img
-        src={"./src/assets/stratagems/" + aryStratagem[stratagemIndex].path}
-        alt={aryStratagem[stratagemIndex].name}
-      />
-    );
-  }, [aryStratagem, stratagemIndex]);
+  // 키 입력
+  const [commandIndex, setCommandIndex] = useState(0);
 
-  const nextStratagems = useMemo(() => {
-    return aryStratagem
-      .slice(stratagemIndex + 1, stratagemIndex + 6)
-      .map((stratagem, index) => {
-        return (
-          <li key={index}>
-            <img
-              src={"./src/assets/stratagems/" + stratagem.path}
-              alt={stratagem.name}
-            />
-          </li>
-        );
-      });
-  }, [aryStratagem, stratagemIndex]);
-
-  const commands = useMemo(() => {
-    return aryStratagem[stratagemIndex].command.split("").map((char, index) => {
-      switch (char) {
-        case "U":
-          char = "arrow_up";
-          break;
-        case "D":
-          char = "arrow_down";
-          break;
-        case "L":
-          char = "arrow_left";
-          break;
-        case "R":
-          char = "arrow_right";
-          break;
+  const handleKeyDown = useCallback(
+    (e: { keyCode: number }) => {
+      const keyDirection = getKeyDirection(e.keyCode);
+      if (keyDirection === "") {
+        // 잘못된 키 입력
+        return;
       }
-      return (
-        <img
-          src={"./src/assets/arrows/" + char + ".png"}
-          alt={char}
-          key={index}
-        />
-      );
-    });
-  }, [aryStratagem, stratagemIndex]);
+
+      if (keyDirection === stratagems[0].command[commandIndex]) {
+        setCommandIndex((cmdIdx) => cmdIdx + 1);
+        console.log(commandIndex);
+        if (commandIndex === stratagems[0].command.length - 1) {
+          setGameScore(++gameScore);
+          setStratagem((stratagem) => {
+            stratagem.shift();
+            return stratagem;
+          });
+          setCommandIndex(0);
+        }
+      }
+    },
+    [commandIndex, stratagems]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
 
   return (
     <Style>
@@ -328,14 +323,62 @@ const Game = ({
         <div className="main-container">
           {/* 스트라타젬 이미지 */}
           <div className="stratagems">
-            {thisStratagemIcon}
-            <ul className="next-stratagems">{nextStratagems}</ul>
+            <img
+              src={"./src/assets/stratagems/" + stratagems[0].path}
+              alt={stratagems[0].name}
+              style={{
+                borderColor:
+                  timePercentage <= WARNING_TIME ? color.red : color.yellow,
+              }}
+            />
+            <ul className="next-stratagems" style={{}}>
+              {stratagems.slice(1, 6).map((stratagem, index) => {
+                return (
+                  <li key={index}>
+                    <img
+                      src={"./src/assets/stratagems/" + stratagem.path}
+                      alt={stratagem.name}
+                    />
+                  </li>
+                );
+              })}
+            </ul>
           </div>
 
-          <h1 className="stratagem-name">
-            {aryStratagem[stratagemIndex].name}
+          <h1
+            className="stratagem-name"
+            style={{
+              backgroundColor:
+                timePercentage <= WARNING_TIME ? color.red : color.yellow,
+            }}
+          >
+            {stratagems[0].name}
           </h1>
-          <div className="commands">{commands}</div>
+          <div className="commands">
+            {stratagems[0].command.split("").map((char, index) => {
+              switch (char) {
+                case "U":
+                  char = "arrow_up";
+                  break;
+                case "D":
+                  char = "arrow_down";
+                  break;
+                case "L":
+                  char = "arrow_left";
+                  break;
+                case "R":
+                  char = "arrow_right";
+                  break;
+              }
+              return (
+                <img
+                  src={"./src/assets/arrows/" + char + ".png"}
+                  alt={char}
+                  key={index}
+                />
+              );
+            })}
+          </div>
           <div className="timer">
             <div id="timeLeft"></div>
           </div>
