@@ -1,20 +1,19 @@
 import styled from "styled-components";
 import { color } from "../../theme";
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { Stratagem, getKeyDirection, getRandStratagems } from "../../utils";
 
 const Style = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   width: 90%;
   height: 100%;
 
-  .screen {
+  .game-container {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     width: 100%;
+    height: 100%;
   }
 
   .side-container {
@@ -22,390 +21,208 @@ const Style = styled.div`
     flex-direction: column;
 
     h1 {
+      font-size: 3.5em;
       color: ${color.yellow};
-      font-size: 4em;
+      overflow: hidden;
     }
 
     h2 {
-      font-size: 3em;
+      font-size: 2.5em;
     }
   }
 
-  .main-container {
-    width: 70%;
-    height: 100%;
+  .side-container .score {
+    display: none;
   }
 
-  .left-container {
+  .align-left {
     text-align: left;
-    justify-content: space-between;
-
-    div {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .score {
-      display: none;
-      text-align: right;
-    }
   }
 
-  .right-container {
+  .align-right {
     text-align: right;
   }
 
-  .stratagems {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 50%;
-  }
-
-  .stratagems > img {
-    width: min(25%, 30vh);
-  }
-
-  .stratagems > img::before {
-    content: "asd";
-  }
-
-  .next-stratagems {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    width: 75%;
-    height: 50%;
-  }
-
-  .next-stratagems li {
+  .main-container {
+    display: grid;
+    grid-template-rows: 40fr 15fr 35fr 10fr;
+    grid-template-columns: 1fr;
     height: 100%;
   }
 
-  .next-stratagems img {
-    height: 100%;
-  }
-
-  .stratagem-name {
-    color: black;
-    font-size: 4em;
-    background-color: ${color.yellow};
-  }
-
+  .stratagems,
+  .next-stratagems,
   .commands {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2%;
   }
 
-  .commands img {
-    width: min(10%, 10vh);
+  .stratagems {
+    justify-content: space-between;
+    grid-row: 1;
   }
 
-  .timer {
-    background-color: ${color.gray};
-    height: 3em;
-  }
-
-  .timer #timeLeft {
-    width: 100%;
-    height: 100%;
-    background-color: ${color.yellow};
-  }
-
-  // 세로모드 모바일
-  @media (max-width: 991px) and (orientation: portrait) {
-    .screen {
-      flex-direction: column;
-      justify-content: left;
-    }
-
-    .main-container {
-      width: 100%;
-      height: 45%;
-    }
-
-    .left-container {
-      flex-direction: row;
-      width: 100%;
-    }
-
-    .left-container .score {
-      display: flex;
-    }
-
-    .right-container {
-      display: none;
-    }
-
-    .stratagems > img {
-      border-width: 3px;
-    }
-
-    .next-stratagems {
-      justify-content: space-around;
-    }
-
-    .arrow-buttons {
-      display: grid;
-    }
-  }
-
-  // 가로모드 모바일
-  @media (max-width: 991px) and (orientation: landscape) {
-    flex-direction: row;
-    gap: 5%;
-
-    .screen {
-      height: 100%;
-    }
-
-    .left-container .score {
-      display: flex;
-    }
-
-    .right-container {
-      display: none;
-    }
-
-    .main-container {
-      height: 100%;
-    }
-
-    .stratagems {
-      height: 50%;
-    }
-
-    .arrow-buttons {
-      display: grid;
-      width: 50%;
-    }
-  }
-`;
-
-const ArrowButtons = styled.div`
-  display: none;
-  width: 80%;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-
-  div {
+  .icon-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 5%;
-    border: 3px solid white;
-    border-radius: 1em;
+    height: 100%;
+  }
+
+  .icon-border {
+    border: 5px solid ${color.yellow};
+  }
+
+  .icon-wrapper > img {
+    height: 100%;
+  }
+
+  .next-stratagems {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+  }
+
+  .next-stratagems > img {
+    height: 100%;
+  }
+
+  .stratagem-name {
+    grid-row: 2;
+    font-size: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
     background-color: ${color.yellow};
-    cursor: pointer;
   }
 
-  img {
-    filter: invert(85%);
-    width: 80%;
+  .commands {
+    grid-row: 3;
   }
 
-  div:nth-child(1) {
-    grid-column: 2;
+  .commands img {
+    height: 50%;
   }
-  div:nth-child(2) {
-    grid-row: 2;
-    grid-column: 1;
+
+  .timer {
+    grid-row: 4;
+    background-color: ${color.gray};
   }
-  div:nth-child(3) {
-    grid-row: 2;
-    grid-column: 2;
+
+  .time-left {
+    width: 100%;
+    height: 100%;
+    background-color: ${color.yellow};
+    z-index: 1;
   }
-  div:nth-child(4) {
-    grid-row: 2;
-    grid-column: 3;
+
+  @media (max-width: 1450px) {
+    .next-stratagems .icon-wrapper:nth-child(5) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1300px) {
+    .next-stratagems .icon-wrapper:nth-child(4) {
+      display: none;
+    }
+  }
+
+  @media (max-width: 1150px) {
+    .next-stratagems .icon-wrapper:nth-child(3) {
+      display: none;
+    }
   }
 `;
 
-type GameProps = {
-  setGameScene: (scene: string) => void;
-  setGameRound: (round: number) => void;
-  gameRound: number;
-  gameScore: number;
-  setGameScore: (score: number) => void;
-};
-
-const Game = ({
-  setGameScene,
-  setGameRound,
-  gameRound,
-  gameScore,
-  setGameScore,
-}: GameProps) => {
-  const TOTAL_TIME = 10000;
-  const INTERVAL = 10;
-  const [time, setTime] = useState(TOTAL_TIME);
-  const WARNING_TIME = 20;
-
-  // 타이머
-  const [timePercentage, setTimePercentage] = useState(100);
-  useEffect(() => {
-    const timeLeft = document.getElementById("timeLeft");
-    const timer = setInterval(() => {
-      // setTime((t) => t - INTERVAL);
-      setTimePercentage((time / TOTAL_TIME) * 100);
-      timeLeft!.style.width = `${timePercentage}%`;
-      timeLeft!.style.backgroundColor = `${
-        timePercentage <= WARNING_TIME ? color.red : color.yellow
-      }`;
-    }, INTERVAL);
-
-    if (time <= 0) {
-      clearInterval(timer);
-      setGameScene("gameover");
-    }
-
-    // 클리너
-    return () => clearInterval(timer);
-  }, [setGameScene, time]);
-
-  // 스트라타젬
-  const [stratagems, setStratagem] = useState(getRandStratagems(gameRound + 5));
-
-  // 키 입력
-  const [commandIndex, setCommandIndex] = useState(0);
-
-  const handleKeyDown = useCallback(
-    (e: { keyCode: number }) => {
-      const keyDirection = getKeyDirection(e.keyCode);
-      if (keyDirection === "") {
-        // 잘못된 키 입력
-        return;
-      }
-
-      if (keyDirection === stratagems[0].command[commandIndex]) {
-        setCommandIndex((cmdIdx) => cmdIdx + 1);
-        console.log(commandIndex);
-        if (commandIndex === stratagems[0].command.length - 1) {
-          setGameScore(++gameScore);
-          setStratagem((stratagem) => {
-            stratagem.shift();
-            return stratagem;
-          });
-          setCommandIndex(0);
-        }
-      }
-    },
-    [commandIndex, stratagems]
-  );
-
-  useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [handleKeyDown]);
-
+const Game = () => {
   return (
     <Style>
-      {/* 메인 화면 */}
-      <div className="screen">
+      <div className="game-container">
         {/* 좌측 컨테이너 */}
-        <div className="side-container left-container">
-          <div className="round">
+        <div className="side-container">
+          <div className="round align-left">
             <h2>Round</h2>
-            <h1>{gameRound}</h1>
+            <h1>1</h1>
           </div>
-          <div className="score">
+          <div className="score align-right">
             <h1>0</h1>
-            <h2>SCORE</h2>
+            <h2>Score</h2>
           </div>
         </div>
-
-        {/* 메인 컨테이너 */}
+        {/* 중앙 컨테이너 */}
         <div className="main-container">
-          {/* 스트라타젬 이미지 */}
           <div className="stratagems">
-            <img
-              src={"./src/assets/stratagems/" + stratagems[0].path}
-              alt={stratagems[0].name}
-              style={{
-                borderColor:
-                  timePercentage <= WARNING_TIME ? color.red : color.yellow,
-              }}
-            />
-            <ul className="next-stratagems" style={{}}>
-              {stratagems.slice(1, 6).map((stratagem, index) => {
-                return (
-                  <li key={index}>
-                    <img
-                      src={"./src/assets/stratagems/" + stratagem.path}
-                      alt={stratagem.name}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
+            {/* 현재 스트라타젬 아이콘 */}
+            <div className="icon-wrapper icon-border">
+              <img src="./src/assets/stratagems/hellbomb.png" alt="hellbomb" />
+            </div>
+            <div className="next-stratagems">
+              {/* 다음 스트라타젬 아이콘 배열 */}
+              <div className="icon-wrapper">
+                <img
+                  src="./src/assets/stratagems/hellbomb.png"
+                  alt="hellbomb"
+                />
+              </div>
+              <div className="icon-wrapper">
+                <img
+                  src="./src/assets/stratagems/hellbomb.png"
+                  alt="hellbomb"
+                />
+              </div>
+              <div className="icon-wrapper">
+                <img
+                  src="./src/assets/stratagems/hellbomb.png"
+                  alt="hellbomb"
+                />
+              </div>
+              <div className="icon-wrapper">
+                <img
+                  src="./src/assets/stratagems/hellbomb.png"
+                  alt="hellbomb"
+                />
+              </div>
+              <div className="icon-wrapper">
+                <img
+                  src="./src/assets/stratagems/hellbomb.png"
+                  alt="hellbomb"
+                />
+              </div>
+            </div>
           </div>
-
-          <h1
-            className="stratagem-name"
-            style={{
-              backgroundColor:
-                timePercentage <= WARNING_TIME ? color.red : color.yellow,
-            }}
-          >
-            {stratagems[0].name}
+          <h1 className="stratagem-name">
+            {/* 스트라타젬 이름 */}
+            Hellbomb
           </h1>
           <div className="commands">
-            {stratagems[0].command.split("").map((char, index) => {
-              switch (char) {
-                case "U":
-                  char = "arrow_up";
-                  break;
-                case "D":
-                  char = "arrow_down";
-                  break;
-                case "L":
-                  char = "arrow_left";
-                  break;
-                case "R":
-                  char = "arrow_right";
-                  break;
-              }
-              return (
-                <img
-                  src={"./src/assets/arrows/" + char + ".png"}
-                  alt={char}
-                  key={index}
-                />
-              );
-            })}
+            {/* 커맨드 요소 */}
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
           </div>
           <div className="timer">
-            <div id="timeLeft"></div>
+            <div className="time-left" />
           </div>
         </div>
-
         {/* 우측 컨테이너 */}
-        <div className="side-container right-container">
-          <h1>{gameScore}</h1>
-          <h2>SCORE</h2>
+        <div className="side-container align-right">
+          <h1>0</h1>
+          <h2>Score</h2>
         </div>
       </div>
-
-      {/* 모바일 사용자용 입력 버튼 */}
-      <ArrowButtons className="arrow-buttons">
-        <div>
-          <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-        </div>
-        <div>
-          <img src="./src/assets/arrows/arrow_left.png" alt="arrow_left" />
-        </div>
-        <div>
-          <img src="./src/assets/arrows/arrow_down.png" alt="arrow_down" />
-        </div>
-        <div>
-          <img src="./src/assets/arrows/arrow_right.png" alt="arrow_right" />
-        </div>
-      </ArrowButtons>
+      <div className="button-container"></div>
     </Style>
   );
 };
