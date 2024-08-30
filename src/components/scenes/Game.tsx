@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { color } from "../../theme";
+import { useState, useEffect, useCallback } from "react";
+import { getKeyDirection, getRandStratagems } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -236,16 +238,107 @@ const Style = styled.div`
   }
 `;
 
-const Game = () => {
+type GameProps = {
+  setGameScene: (scene: string) => void;
+  gameRound: number;
+  gameScore: number;
+  setGameScore: (score: number) => void;
+};
+
+const Game = ({
+  setGameScene,
+  gameRound,
+  gameScore,
+  setGameScore,
+}: GameProps) => {
+  const TOTAL_TIME = 10000;
+  const INTERVAL = 10;
+  const [time, setTime] = useState(TOTAL_TIME);
+  const WARNING_TIME = 30;
+  const ADD_TIME_AMOUNT = 1000;
+
+  // 타이머
+  const [timePercentage, setTimePercentage] = useState(100);
+  useEffect(() => {
+    const timeLeft = document.getElementById("time-left");
+    const timer = setInterval(() => {
+      setTime((t) => t - INTERVAL);
+      setTimePercentage((time / TOTAL_TIME) * 100);
+      timeLeft!.style.width = `${timePercentage}%`;
+      timeLeft!.style.backgroundColor = `${
+        timePercentage <= WARNING_TIME ? color.red : color.yellow
+      }`;
+    }, INTERVAL);
+
+    if (time <= 0) {
+      clearInterval(timer);
+      setGameScene("gameover");
+    }
+
+    // 클리너
+    return () => clearInterval(timer);
+  }, [setGameScene, time, timePercentage]);
+
+  // 스트라타젬
+  const [stratagems, setStratagem] = useState(getRandStratagems(gameRound + 5));
+
+  // 키 입력
+  const [commandIndex, setCommandIndex] = useState(0);
+
+  const handleKeyDown = useCallback(
+    (e: { keyCode: number }) => {
+      const keyDirection = getKeyDirection(e.keyCode);
+      if (keyDirection === "") {
+        // 잘못된 키 입력
+        return;
+      }
+
+      if (keyDirection === stratagems[0].command[commandIndex]) {
+        // 올바른 커맨드 입력
+        setCommandIndex((cmdIdx) => cmdIdx + 1);
+        console.log(commandIndex);
+        if (commandIndex === stratagems[0].command.length - 1) {
+          // 커맨드 입력 성공
+          setGameScore(++gameScore);
+          if (stratagems.length <= 1) {
+            // 다음 스트라타젬이 없다면
+            setGameScene("clear");
+            return;
+          }
+
+          // 다음 스트라타젬이 있다면
+          setStratagem((stratagem) => {
+            stratagem.shift();
+            return stratagem;
+          });
+
+          // 후처리
+          setTime((t) => Math.min(t + ADD_TIME_AMOUNT, TOTAL_TIME));
+          setCommandIndex(0);
+        }
+      }
+    },
+    [commandIndex, gameScore, setGameScene, setGameScore, stratagems]
+  );
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleKeyDown]);
+
   return (
     <Style>
+      {/* 모바일 가로 모드에서 표시될 컨테이너 */}
       <div className="data-container">
         <div className="side-container align-left">
           <h2>Round</h2>
-          <h1>99999</h1>
+          <h1>{gameRound}</h1>
         </div>
         <div className="side-container align-right">
-          <h1>99999</h1>
+          <h1>{gameScore}</h1>
           <h2>Score</h2>
         </div>
       </div>
@@ -253,7 +346,7 @@ const Game = () => {
         {/* 좌측 컨테이너 */}
         <div className="side-container align-left">
           <h2>Round</h2>
-          <h1>99999</h1>
+          <h1>{gameRound}</h1>
         </div>
         {/* 중앙 컨테이너 */}
         <div className="main-container">
@@ -261,62 +354,82 @@ const Game = () => {
             <div className="stratagems">
               {/* 현재 스트라타젬 아이콘 */}
               <img
-                src="./src/assets/stratagems/hellbomb.png"
-                alt="hellbomb"
+                src={"./src/assets/stratagems/" + stratagems[0].path}
+                alt={stratagems[0].name}
                 id="this-stratagem-icon"
+                style={{
+                  borderColor:
+                    timePercentage <= WARNING_TIME ? color.red : color.yellow,
+                }}
               />
+              {/* 다음 스트라타젬 아이콘 배열 */}
               <div className="next-stratagems">
-                {/* 다음 스트라타젬 아이콘 배열 */}
-                <img
-                  src="./src/assets/stratagems/hellbomb.png"
-                  alt="hellbomb"
-                />
-                <img
-                  src="./src/assets/stratagems/hellbomb.png"
-                  alt="hellbomb"
-                />
-                <img
-                  src="./src/assets/stratagems/hellbomb.png"
-                  alt="hellbomb"
-                />
-                <img
-                  src="./src/assets/stratagems/hellbomb.png"
-                  alt="hellbomb"
-                  id="rest-icons"
-                />
-                <img
-                  src="./src/assets/stratagems/hellbomb.png"
-                  alt="hellbomb"
-                  id="rest-icons"
-                />
+                {stratagems
+                  .slice(1, 6)
+                  .map((stratagem, index) => {
+                    return (
+                      <img
+                        src={"./src/assets/stratagems/" + stratagem.path}
+                        alt={stratagem.name}
+                        id={index >= 3 ? "rest-icons" : ""}
+                      />
+                    );
+                  })
+                  .concat(
+                    Array(Math.max(0, 5 - stratagems.length + 1)).fill(
+                      <img style={{ visibility: "hidden" }} />
+                    )
+                  )}
               </div>
             </div>
-            <h1 className="stratagem-name">
-              {/* 스트라타젬 이름 */}
-              Hellbomb
+            {/* 스트라타젬 이름 */}
+            <h1
+              className="stratagem-name"
+              style={{
+                backgroundColor:
+                  timePercentage <= WARNING_TIME ? color.red : color.yellow,
+              }}
+            >
+              {stratagems[0].name}
             </h1>
           </div>
+          {/* 커맨드 요소 */}
           <div className="commands">
-            {/* 커맨드 요소 */}
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
-            <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+            {stratagems[0].command.split("").map((char, index) => {
+              switch (char) {
+                case "U":
+                  char = "arrow_up";
+                  break;
+                case "D":
+                  char = "arrow_down";
+                  break;
+                case "L":
+                  char = "arrow_left";
+                  break;
+                case "R":
+                  char = "arrow_right";
+                  break;
+              }
+              return (
+                <img
+                  src={"./src/assets/arrows/" + char + ".png"}
+                  alt={char}
+                  key={index}
+                />
+              );
+            })}
           </div>
           <div className="timer">
-            <div className="time-left" />
+            <div className="time-left" id="time-left" />
           </div>
         </div>
         {/* 우측 컨테이너 */}
         <div className="side-container align-right">
-          <h1>99999</h1>
+          <h1>{gameScore}</h1>
           <h2>Score</h2>
         </div>
       </div>
+      {/* 모바일용 화살표 버튼 */}
       <div className="button-container">
         <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
         <div className="button-bottom">

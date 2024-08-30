@@ -46,7 +46,7 @@ const Background = styled.div`
 `;
 
 const Home = () => {
-  const [gameScene, setGameScene] = useState("game");
+  const [gameScene, setGameScene] = useState("main");
   const [gameRound, setGameRound] = useState(1);
   const [gameScore, setGameScore] = useState(0);
 
@@ -67,13 +67,18 @@ const Home = () => {
         {gameScene === "game" && (
           <Game
             setGameScene={setGameScene}
-            setGameRound={setGameRound}
             gameRound={gameRound}
             gameScore={gameScore}
             setGameScore={setGameScore}
           />
         )}
-        {gameScene === "clear" && <Clear gameRound={gameRound} />}
+        {gameScene === "clear" && (
+          <Clear
+            gameRound={gameRound}
+            setGameScene={setGameScene}
+            setGameRound={setGameRound}
+          />
+        )}
         {gameScene === "gameover" && (
           <GameOver setGameScene={setGameScene} gameScore={gameScore} />
         )}

@@ -29,9 +29,11 @@ const Container = styled.div`
 
 type GameProps = {
   gameRound: number;
+  setGameScene: (scene: string) => void;
+  setGameRound: (round: number) => void;
 };
 
-const Clear = ({ gameRound }: GameProps) => {
+const Clear = ({ gameRound, setGameScene, setGameRound }: GameProps) => {
   const [loop, setLoop] = useState(0);
   const intervalId = useRef<number | null>(null);
   useEffect(() => {
@@ -41,6 +43,8 @@ const Clear = ({ gameRound }: GameProps) => {
       setLoop((l: number) => l + 1);
       if (loop > 4 && intervalId.current) {
         clearInterval(intervalId.current);
+        setGameRound(++gameRound);
+        setGameScene("ready");
       }
     }, 500);
     return () => {
