@@ -1,20 +1,28 @@
 import styled from "styled-components";
 import { color } from "../../theme";
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { Stratagem, getKeyDirection, getRandStratagems } from "../../utils";
+import { useState, useEffect, useCallback } from "react";
+import { getKeyDirection, getRandStratagems, Stratagem } from "../../utils";
+// import ArrowUp from "../../assets/arrows/arrow_up.svg";
+import {
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+} from "../../components/Arrows";
 
 const Style = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  width: 90%;
+  width: 90vw;
   height: 100%;
 
-  .screen {
+  .game-container {
     display: flex;
-    justify-content: space-between;
-    width: 100%;
+    justify-content: space-around;
+    width: 90vw;
+    height: 100%;
   }
 
   .side-container {
@@ -22,233 +30,252 @@ const Style = styled.div`
     flex-direction: column;
 
     h1 {
+      font-size: 3.5em;
       color: ${color.yellow};
-      font-size: 4em;
+      overflow: hidden;
     }
 
     h2 {
-      font-size: 3em;
+      font-size: 2.5em;
     }
   }
 
-  .main-container {
-    width: 70%;
+  .data-container {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
     height: 100%;
   }
 
-  .left-container {
+  .align-left {
     text-align: left;
-    justify-content: space-between;
-
-    div {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .score {
-      display: none;
-      text-align: right;
-    }
   }
 
-  .right-container {
+  .align-right {
     text-align: right;
   }
 
-  .stratagems {
+  .main-container {
     display: flex;
-    align-items: center;
-    width: 100%;
-    height: 50%;
-  }
-
-  .stratagems > img {
-    width: min(25%, 30vh);
-  }
-
-  .stratagems > img::before {
-    content: "asd";
-  }
-
-  .next-stratagems {
-    display: flex;
-    align-items: center;
-    list-style: none;
-    width: 75%;
-    height: 50%;
-  }
-
-  .next-stratagems li {
+    flex-direction: column;
+    justify-content: space-between;
+    width: 60vw;
     height: 100%;
   }
 
-  .next-stratagems img {
-    height: 100%;
+  .main-top {
+    display: flex;
+    flex-direction: column;
   }
 
-  .stratagem-name {
-    color: black;
-    font-size: 4em;
-    background-color: ${color.yellow};
-  }
-
+  .stratagems,
+  .next-stratagems,
   .commands {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 2%;
+    width: 100%;
   }
 
-  .commands img {
-    width: min(10%, 10vh);
+  .stratagems {
+    justify-content: space-between;
+  }
+
+  .icon-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  #this-stratagem-icon {
+    width: 15vw;
+    border: 5px solid ${color.yellow};
+  }
+
+  .next-stratagems {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 50%;
+  }
+
+  .next-stratagems img {
+    width: 18%;
+  }
+
+  .stratagem-name {
+    font-size: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    background-color: ${color.yellow};
+  }
+
+  .commands svg {
+    width: 7vw;
   }
 
   .timer {
-    background-color: ${color.gray};
+    width: 100%;
     height: 3em;
+    background-color: ${color.gray};
   }
 
-  .timer #timeLeft {
+  .time-left {
     width: 100%;
     height: 100%;
     background-color: ${color.yellow};
+    z-index: 1;
+  }
+
+  // 화살표 버튼 컨테이너
+  .button-container {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+  }
+
+  .button-bottom {
+    display: flex;
+    justify-content: center;
+    gap: 1em;
+  }
+
+  .button-container svg {
+    border: 3px solid white;
+    border-radius: 10px;
+    background-color: ${color.yellow};
+    width: 20vw;
+    max-width: 90px;
+    height: 20vw;
+    max-height: 90px;
   }
 
   // 세로모드 모바일
   @media (max-width: 991px) and (orientation: portrait) {
-    .screen {
-      flex-direction: column;
-      justify-content: left;
-    }
+    justify-content: space-between;
 
     .main-container {
-      width: 100%;
-      height: 45%;
+      justify-content: left;
+      gap: 2em;
     }
 
-    .left-container {
-      flex-direction: row;
-      width: 100%;
-    }
-
-    .left-container .score {
-      display: flex;
-    }
-
-    .right-container {
-      display: none;
-    }
-
-    .stratagems > img {
+    #this-stratagem-icon {
+      width: 20vw;
       border-width: 3px;
     }
 
-    .next-stratagems {
-      justify-content: space-around;
+    .next-stratagems img {
+      width: auto;
+      height: 12vw;
     }
 
-    .arrow-buttons {
-      display: grid;
+    #rest-icons {
+      display: none;
+    }
+
+    .button-container {
+      display: flex;
     }
   }
 
   // 가로모드 모바일
   @media (max-width: 991px) and (orientation: landscape) {
+    justify-content: space-between;
     flex-direction: row;
-    gap: 5%;
 
-    .screen {
-      height: 100%;
+    .side-container {
+      justify-content: space-between;
     }
 
-    .left-container .score {
+    .side-container .score {
       display: flex;
     }
 
-    .right-container {
-      display: none;
+    .game-container {
+      flex-direction: row;
     }
 
     .main-container {
-      height: 100%;
+      width: 40vw;
     }
 
-    .stratagems {
-      height: 50%;
+    .data-container {
+      display: flex;
     }
 
-    .arrow-buttons {
-      display: grid;
-      width: 50%;
+    .game-container .side-container {
+      display: none;
     }
-  }
-`;
 
-const ArrowButtons = styled.div`
-  display: none;
-  width: 80%;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
+    #this-stratagem-icon {
+      width: auto;
+      height: 20vh;
+      max-height: 120px;
+      border-width: 3px;
+    }
 
-  div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 5%;
-    border: 3px solid white;
-    border-radius: 1em;
-    background-color: ${color.yellow};
-    cursor: pointer;
-  }
+    .next-stratagems img {
+      width: auto;
+      height: 12vh;
+      max-height: 80px;
+    }
 
-  img {
-    filter: invert(85%);
-    width: 80%;
-  }
+    #rest-icons {
+      display: none;
+    }
 
-  div:nth-child(1) {
-    grid-column: 2;
-  }
-  div:nth-child(2) {
-    grid-row: 2;
-    grid-column: 1;
-  }
-  div:nth-child(3) {
-    grid-row: 2;
-    grid-column: 2;
-  }
-  div:nth-child(4) {
-    grid-row: 2;
-    grid-column: 3;
+    .commands svg {
+      width: 5vw;
+    }
+
+    .button-container {
+      display: flex;
+    }
+
+    .button-container svg {
+      width: 10vw;
+      height: 10vw;
+    }
   }
 `;
 
 type GameProps = {
   setGameScene: (scene: string) => void;
-  setGameRound: (round: number) => void;
   gameRound: number;
   gameScore: number;
   setGameScore: (score: number) => void;
+  setAryBonus: (bonus: number[]) => void;
+  setGameRound: (round: number) => void;
 };
 
 const Game = ({
   setGameScene,
-  setGameRound,
   gameRound,
   gameScore,
   setGameScore,
+  setAryBonus,
+  setGameRound,
 }: GameProps) => {
   const TOTAL_TIME = 10000;
   const INTERVAL = 10;
   const [time, setTime] = useState(TOTAL_TIME);
-  const WARNING_TIME = 20;
+  const WARNING_TIME = 30;
+  const ADD_TIME_AMOUNT = 1000;
+  const MAX_SCORE = 99999;
+  const MAX_ROUND = 99999;
 
   // 타이머
   const [timePercentage, setTimePercentage] = useState(100);
   useEffect(() => {
-    const timeLeft = document.getElementById("timeLeft");
+    const timeLeft = document.getElementById("time-left");
     const timer = setInterval(() => {
-      // setTime((t) => t - INTERVAL);
+      setTime((t) => t - INTERVAL);
       setTimePercentage((time / TOTAL_TIME) * 100);
       timeLeft!.style.width = `${timePercentage}%`;
       timeLeft!.style.backgroundColor = `${
@@ -263,13 +290,76 @@ const Game = ({
 
     // 클리너
     return () => clearInterval(timer);
-  }, [setGameScene, time]);
+  }, [setGameScene, time, timePercentage]);
 
   // 스트라타젬
   const [stratagems, setStratagem] = useState(getRandStratagems(gameRound + 5));
 
   // 키 입력
   const [commandIndex, setCommandIndex] = useState(0);
+  const [, setIsPerfect] = useState(true);
+  const [countPerfect, setCountPerfect] = useState(0);
+
+  // 스트라타젬 커맨드 입력
+  const handleCmdInput = useCallback(
+    (keyDirection: string) => {
+      console.log(keyDirection);
+      if (keyDirection === stratagems[0].command[commandIndex]) {
+        // 올바른 커맨드 입력
+        setCommandIndex((cmdIdx) => cmdIdx + 1);
+        console.log(commandIndex);
+        if (commandIndex === stratagems[0].command.length - 1) {
+          // 커맨드 입력 성공
+          setGameScore(
+            Math.min(gameScore + stratagems[0].command.length * 5, MAX_SCORE)
+          );
+          if (stratagems.length <= 1) {
+            // 다음 스트라타젬이 없다면
+            const roundBonus = 75 + gameRound * 25;
+            const timeBonus = Math.floor(time / 1000) * 10;
+            const perfectBonus = countPerfect * 20;
+            setGameScore(
+              Math.min(
+                gameScore + roundBonus + timeBonus + perfectBonus,
+                MAX_SCORE
+              )
+            );
+            setAryBonus([roundBonus, timeBonus, perfectBonus]);
+            setGameRound(Math.min(gameRound + 1, MAX_ROUND));
+            setGameScene("clear");
+            return;
+          }
+
+          // 다음 스트라타젬이 있다면
+          setStratagem((stratagem) => {
+            stratagem.shift();
+            return stratagem;
+          });
+
+          // 후처리
+          setTime((t) => Math.min(t + ADD_TIME_AMOUNT, TOTAL_TIME));
+          setCountPerfect((count) => count + 1);
+          setCommandIndex(0);
+        }
+      } else {
+        // 잘못된 커맨드 입력
+        setIsPerfect(false);
+        setCommandIndex(0);
+      }
+    },
+    [
+      commandIndex,
+      countPerfect,
+      gameRound,
+      gameScore,
+      setAryBonus,
+      setGameRound,
+      setGameScene,
+      setGameScore,
+      stratagems,
+      time,
+    ]
+  );
 
   const handleKeyDown = useCallback(
     (e: { keyCode: number }) => {
@@ -279,20 +369,9 @@ const Game = ({
         return;
       }
 
-      if (keyDirection === stratagems[0].command[commandIndex]) {
-        setCommandIndex((cmdIdx) => cmdIdx + 1);
-        console.log(commandIndex);
-        if (commandIndex === stratagems[0].command.length - 1) {
-          setGameScore(++gameScore);
-          setStratagem((stratagem) => {
-            stratagem.shift();
-            return stratagem;
-          });
-          setCommandIndex(0);
-        }
-      }
+      handleCmdInput(keyDirection);
     },
-    [commandIndex, stratagems]
+    [handleCmdInput]
   );
 
   useEffect(() => {
@@ -305,107 +384,123 @@ const Game = ({
 
   return (
     <Style>
-      {/* 메인 화면 */}
-      <div className="screen">
-        {/* 좌측 컨테이너 */}
-        <div className="side-container left-container">
-          <div className="round">
-            <h2>Round</h2>
-            <h1>{gameRound}</h1>
-          </div>
-          <div className="score">
-            <h1>0</h1>
-            <h2>SCORE</h2>
-          </div>
+      {/* 모바일 가로 모드에서 표시될 컨테이너 */}
+      <div className="data-container">
+        <div className="side-container align-left">
+          <h2>Round</h2>
+          <h1>{gameRound}</h1>
         </div>
-
-        {/* 메인 컨테이너 */}
+        <div className="side-container align-right">
+          <h1>{gameScore}</h1>
+          <h2>Score</h2>
+        </div>
+      </div>
+      <div className="game-container">
+        {/* 좌측 컨테이너 */}
+        <div className="side-container align-left">
+          <h2>Round</h2>
+          <h1>{gameRound}</h1>
+        </div>
+        {/* 중앙 컨테이너 */}
         <div className="main-container">
-          {/* 스트라타젬 이미지 */}
-          <div className="stratagems">
-            <img
-              src={"./src/assets/stratagems/" + stratagems[0].path}
-              alt={stratagems[0].name}
+          <div className="main-top">
+            <div className="stratagems">
+              {/* 현재 스트라타젬 아이콘 */}
+              <img
+                src={"./src/assets/stratagems/" + stratagems[0].path}
+                alt={stratagems[0].name}
+                id="this-stratagem-icon"
+                style={{
+                  borderColor:
+                    timePercentage <= WARNING_TIME ? color.red : color.yellow,
+                }}
+              />
+              {/* 다음 스트라타젬 아이콘 배열 */}
+              <div className="next-stratagems">
+                {stratagems
+                  .slice(1, 6)
+                  .concat(
+                    Array(Math.max(0, 5 - stratagems.length + 1)).fill(
+                      {} as Stratagem
+                    )
+                  )
+                  .map((stratagem, index) => {
+                    return (
+                      <img
+                        src={"./src/assets/stratagems/" + stratagem.path}
+                        alt={stratagem.name ? stratagem.name : ""}
+                        id={index >= 3 ? "rest-icons" : ""}
+                        key={index}
+                      />
+                    );
+                  })}
+              </div>
+            </div>
+            {/* 스트라타젬 이름 */}
+            <h1
+              className="stratagem-name"
               style={{
-                borderColor:
+                backgroundColor:
                   timePercentage <= WARNING_TIME ? color.red : color.yellow,
               }}
-            />
-            <ul className="next-stratagems" style={{}}>
-              {stratagems.slice(1, 6).map((stratagem, index) => {
-                return (
-                  <li key={index}>
-                    <img
-                      src={"./src/assets/stratagems/" + stratagem.path}
-                      alt={stratagem.name}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
+            >
+              {stratagems[0].name}
+            </h1>
           </div>
-
-          <h1
-            className="stratagem-name"
-            style={{
-              backgroundColor:
-                timePercentage <= WARNING_TIME ? color.red : color.yellow,
-            }}
-          >
-            {stratagems[0].name}
-          </h1>
+          {/* 커맨드 요소 */}
           <div className="commands">
             {stratagems[0].command.split("").map((char, index) => {
               switch (char) {
                 case "U":
-                  char = "arrow_up";
-                  break;
+                  return <ArrowUp color={(commandIndex > index ? color.yellow : "white")} key={index} />;
                 case "D":
-                  char = "arrow_down";
-                  break;
+                  return <ArrowDown color={(commandIndex > index ? color.yellow : "white")} key={index} />;
                 case "L":
-                  char = "arrow_left";
-                  break;
+                  return <ArrowLeft color={(commandIndex > index ? color.yellow : "white")} key={index} />;
                 case "R":
-                  char = "arrow_right";
-                  break;
+                  return <ArrowRight color={(commandIndex > index ? color.yellow : "white")} key={index} />;
               }
-              return (
-                <img
-                  src={"./src/assets/arrows/" + char + ".png"}
-                  alt={char}
-                  key={index}
-                />
-              );
             })}
           </div>
           <div className="timer">
-            <div id="timeLeft"></div>
+            <div className="time-left" id="time-left" />
           </div>
         </div>
-
         {/* 우측 컨테이너 */}
-        <div className="side-container right-container">
+        <div className="side-container align-right">
           <h1>{gameScore}</h1>
-          <h2>SCORE</h2>
+          <h2>Score</h2>
         </div>
       </div>
-
-      {/* 모바일 사용자용 입력 버튼 */}
-      <ArrowButtons className="arrow-buttons">
-        <div>
-          <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+      {/* 모바일용 화살표 버튼 */}
+      <div className="button-container">
+        <ArrowUp
+          color={"#FFFFFF"}
+          onClick={() => {
+            handleCmdInput("U");
+          }}
+        />
+        <div className="button-bottom">
+          <ArrowLeft
+            color={"#FFFFFF"}
+            onClick={() => {
+              handleCmdInput("L");
+            }}
+          />
+          <ArrowDown
+            color={"#FFFFFF"}
+            onClick={() => {
+              handleCmdInput("D");
+            }}
+          />
+          <ArrowRight
+            color={"#FFFFFF"}
+            onClick={() => {
+              handleCmdInput("R");
+            }}
+          />
         </div>
-        <div>
-          <img src="./src/assets/arrows/arrow_left.png" alt="arrow_left" />
-        </div>
-        <div>
-          <img src="./src/assets/arrows/arrow_down.png" alt="arrow_down" />
-        </div>
-        <div>
-          <img src="./src/assets/arrows/arrow_right.png" alt="arrow_right" />
-        </div>
-      </ArrowButtons>
+      </div>
     </Style>
   );
 };

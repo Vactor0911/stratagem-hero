@@ -29,7 +29,7 @@ type GameProps = {
 };
 
 const Main = ({ getReady }: GameProps) => {
-  const handleKeyDown = (e: { keyCode: number; }) => {
+  const handleKeyDown = (e: { keyCode: number }) => {
     if (getKeyDirection(e.keyCode)) {
       getReady();
     }
