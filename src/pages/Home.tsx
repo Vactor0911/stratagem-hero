@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Main, Ready, Clear, GameOver, Game } from "../components/scenes";
 
 const Container = styled.div`
-  height: calc(100% - 52px - 1rem);
+  height: calc(100vh - 68px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -46,7 +46,7 @@ const Background = styled.div`
 `;
 
 const Home = () => {
-  const [gameScene, setGameScene] = useState("main");
+  const [gameScene, setGameScene] = useState("game");
   const [gameRound, setGameRound] = useState(1);
   const [gameScore, setGameScore] = useState(0);
 
