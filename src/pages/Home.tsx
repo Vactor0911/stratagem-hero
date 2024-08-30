@@ -34,7 +34,6 @@ const Background = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: -1;
   text-align: center;
 
   /* background */
@@ -49,6 +48,7 @@ const Home = () => {
   const [gameScene, setGameScene] = useState("main");
   const [gameRound, setGameRound] = useState(1);
   const [gameScore, setGameScore] = useState(0);
+  const [aryBonus, setAryBonus] = useState([0, 0, 0]);
 
   const getReady = () => {
     if (gameScene !== "main") {
@@ -70,13 +70,16 @@ const Home = () => {
             gameRound={gameRound}
             gameScore={gameScore}
             setGameScore={setGameScore}
+            setAryBonus={setAryBonus}
+            setGameRound={setGameRound}
           />
         )}
         {gameScene === "clear" && (
           <Clear
             gameRound={gameRound}
             setGameScene={setGameScene}
-            setGameRound={setGameRound}
+            gameScore={gameScore}
+            aryBonus={aryBonus}
           />
         )}
         {gameScene === "gameover" && (

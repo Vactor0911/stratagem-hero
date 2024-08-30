@@ -1,7 +1,14 @@
 import styled from "styled-components";
 import { color } from "../../theme";
 import { useState, useEffect, useCallback } from "react";
-import { getKeyDirection, getRandStratagems } from "../../utils";
+import { getKeyDirection, getRandStratagems, Stratagem } from "../../utils";
+// import ArrowUp from "../../assets/arrows/arrow_up.svg";
+import {
+  ArrowUp,
+  ArrowDown,
+  ArrowLeft,
+  ArrowRight,
+} from "../../components/Arrows";
 
 const Style = styled.div`
   display: flex;
@@ -107,7 +114,7 @@ const Style = styled.div`
     background-color: ${color.yellow};
   }
 
-  .commands img {
+  .commands svg {
     width: 7vw;
   }
 
@@ -139,7 +146,7 @@ const Style = styled.div`
     gap: 1em;
   }
 
-  .button-container img {
+  .button-container svg {
     border: 3px solid white;
     border-radius: 10px;
     background-color: ${color.yellow};
@@ -223,7 +230,7 @@ const Style = styled.div`
       display: none;
     }
 
-    .commands img {
+    .commands svg {
       width: 5vw;
     }
 
@@ -231,7 +238,7 @@ const Style = styled.div`
       display: flex;
     }
 
-    .button-container img {
+    .button-container svg {
       width: 10vw;
       height: 10vw;
     }
@@ -243,6 +250,8 @@ type GameProps = {
   gameRound: number;
   gameScore: number;
   setGameScore: (score: number) => void;
+  setAryBonus: (bonus: number[]) => void;
+  setGameRound: (round: number) => void;
 };
 
 const Game = ({
@@ -250,12 +259,16 @@ const Game = ({
   gameRound,
   gameScore,
   setGameScore,
+  setAryBonus,
+  setGameRound,
 }: GameProps) => {
   const TOTAL_TIME = 10000;
   const INTERVAL = 10;
   const [time, setTime] = useState(TOTAL_TIME);
   const WARNING_TIME = 30;
   const ADD_TIME_AMOUNT = 1000;
+  const MAX_SCORE = 99999;
+  const MAX_ROUND = 99999;
 
   // 타이머
   const [timePercentage, setTimePercentage] = useState(100);
@@ -284,24 +297,35 @@ const Game = ({
 
   // 키 입력
   const [commandIndex, setCommandIndex] = useState(0);
+  const [, setIsPerfect] = useState(true);
+  const [countPerfect, setCountPerfect] = useState(0);
 
-  const handleKeyDown = useCallback(
-    (e: { keyCode: number }) => {
-      const keyDirection = getKeyDirection(e.keyCode);
-      if (keyDirection === "") {
-        // 잘못된 키 입력
-        return;
-      }
-
+  // 스트라타젬 커맨드 입력
+  const handleCmdInput = useCallback(
+    (keyDirection: string) => {
+      console.log(keyDirection);
       if (keyDirection === stratagems[0].command[commandIndex]) {
         // 올바른 커맨드 입력
         setCommandIndex((cmdIdx) => cmdIdx + 1);
         console.log(commandIndex);
         if (commandIndex === stratagems[0].command.length - 1) {
           // 커맨드 입력 성공
-          setGameScore(++gameScore);
+          setGameScore(
+            Math.min(gameScore + stratagems[0].command.length * 5, MAX_SCORE)
+          );
           if (stratagems.length <= 1) {
             // 다음 스트라타젬이 없다면
+            const roundBonus = 75 + gameRound * 25;
+            const timeBonus = Math.floor(time / 1000) * 10;
+            const perfectBonus = countPerfect * 20;
+            setGameScore(
+              Math.min(
+                gameScore + roundBonus + timeBonus + perfectBonus,
+                MAX_SCORE
+              )
+            );
+            setAryBonus([roundBonus, timeBonus, perfectBonus]);
+            setGameRound(Math.min(gameRound + 1, MAX_ROUND));
             setGameScene("clear");
             return;
           }
@@ -314,11 +338,40 @@ const Game = ({
 
           // 후처리
           setTime((t) => Math.min(t + ADD_TIME_AMOUNT, TOTAL_TIME));
+          setCountPerfect((count) => count + 1);
           setCommandIndex(0);
         }
+      } else {
+        // 잘못된 커맨드 입력
+        setIsPerfect(false);
+        setCommandIndex(0);
       }
     },
-    [commandIndex, gameScore, setGameScene, setGameScore, stratagems]
+    [
+      commandIndex,
+      countPerfect,
+      gameRound,
+      gameScore,
+      setAryBonus,
+      setGameRound,
+      setGameScene,
+      setGameScore,
+      stratagems,
+      time,
+    ]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: { keyCode: number }) => {
+      const keyDirection = getKeyDirection(e.keyCode);
+      if (keyDirection === "") {
+        // 잘못된 키 입력
+        return;
+      }
+
+      handleCmdInput(keyDirection);
+    },
+    [handleCmdInput]
   );
 
   useEffect(() => {
@@ -366,20 +419,21 @@ const Game = ({
               <div className="next-stratagems">
                 {stratagems
                   .slice(1, 6)
+                  .concat(
+                    Array(Math.max(0, 5 - stratagems.length + 1)).fill(
+                      {} as Stratagem
+                    )
+                  )
                   .map((stratagem, index) => {
                     return (
                       <img
                         src={"./src/assets/stratagems/" + stratagem.path}
-                        alt={stratagem.name}
+                        alt={stratagem.name ? stratagem.name : ""}
                         id={index >= 3 ? "rest-icons" : ""}
+                        key={index}
                       />
                     );
-                  })
-                  .concat(
-                    Array(Math.max(0, 5 - stratagems.length + 1)).fill(
-                      <img style={{ visibility: "hidden" }} />
-                    )
-                  )}
+                  })}
               </div>
             </div>
             {/* 스트라타젬 이름 */}
@@ -398,25 +452,14 @@ const Game = ({
             {stratagems[0].command.split("").map((char, index) => {
               switch (char) {
                 case "U":
-                  char = "arrow_up";
-                  break;
+                  return <ArrowUp color={(commandIndex > index ? color.yellow : "white")} key={index} />;
                 case "D":
-                  char = "arrow_down";
-                  break;
+                  return <ArrowDown color={(commandIndex > index ? color.yellow : "white")} key={index} />;
                 case "L":
-                  char = "arrow_left";
-                  break;
+                  return <ArrowLeft color={(commandIndex > index ? color.yellow : "white")} key={index} />;
                 case "R":
-                  char = "arrow_right";
-                  break;
+                  return <ArrowRight color={(commandIndex > index ? color.yellow : "white")} key={index} />;
               }
-              return (
-                <img
-                  src={"./src/assets/arrows/" + char + ".png"}
-                  alt={char}
-                  key={index}
-                />
-              );
             })}
           </div>
           <div className="timer">
@@ -431,11 +474,31 @@ const Game = ({
       </div>
       {/* 모바일용 화살표 버튼 */}
       <div className="button-container">
-        <img src="./src/assets/arrows/arrow_up.png" alt="arrow_up" />
+        <ArrowUp
+          color={"#FFFFFF"}
+          onClick={() => {
+            handleCmdInput("U");
+          }}
+        />
         <div className="button-bottom">
-          <img src="./src/assets/arrows/arrow_left.png" alt="arrow_left" />
-          <img src="./src/assets/arrows/arrow_down.png" alt="arrow_down" />
-          <img src="./src/assets/arrows/arrow_right.png" alt="arrow_right" />
+          <ArrowLeft
+            color={"#FFFFFF"}
+            onClick={() => {
+              handleCmdInput("L");
+            }}
+          />
+          <ArrowDown
+            color={"#FFFFFF"}
+            onClick={() => {
+              handleCmdInput("D");
+            }}
+          />
+          <ArrowRight
+            color={"#FFFFFF"}
+            onClick={() => {
+              handleCmdInput("R");
+            }}
+          />
         </div>
       </div>
     </Style>

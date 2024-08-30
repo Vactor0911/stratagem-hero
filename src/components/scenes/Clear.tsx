@@ -30,46 +30,48 @@ const Container = styled.div`
 type GameProps = {
   gameRound: number;
   setGameScene: (scene: string) => void;
-  setGameRound: (round: number) => void;
+  gameScore: number;
+  aryBonus: number[];
 };
 
-const Clear = ({ gameRound, setGameScene, setGameRound }: GameProps) => {
+const Clear = ({ gameRound, setGameScene, gameScore, aryBonus }: GameProps) => {
   const [loop, setLoop] = useState(0);
   const intervalId = useRef<number | null>(null);
   useEffect(() => {
-    console.log("useEffect"); // 출력용
     intervalId.current = setInterval(() => {
-      console.log(loop); // 출력용
       setLoop((l: number) => l + 1);
       if (loop > 4 && intervalId.current) {
         clearInterval(intervalId.current);
-        setGameRound(++gameRound);
-        setGameScene("ready");
+        const delay = setTimeout(() => {
+          setGameScene("ready");
+        }, 3000);
+
+        return () => clearTimeout(delay);
       }
     }, 500);
     return () => {
       if (!intervalId.current) return;
       clearInterval(intervalId.current);
     };
-  }, [loop]);
+  }, [gameRound, loop, setGameScene]);
 
   return (
     <Style>
       <Container style={{ opacity: loop >= 1 ? "1" : "0" }}>
         <h1>Round Bonus</h1>
-        <h1 className="score">100</h1>
+        <h1 className="score">{aryBonus[0]}</h1>
       </Container>
       <Container style={{ opacity: loop >= 2 ? "1" : "0" }}>
         <h1>Time Bonus</h1>
-        <h1 className="score">100</h1>
+        <h1 className="score">{aryBonus[1]}</h1>
       </Container>
       <Container style={{ opacity: loop >= 3 ? "1" : "0" }}>
         <h1>Perfect Bonus</h1>
-        <h1 className="score">100</h1>
+        <h1 className="score">{aryBonus[2]}</h1>
       </Container>
       <Container style={{ opacity: loop >= 4 ? "1" : "0" }}>
-        <h1>Total Bonus</h1>
-        <h1 className="score">100</h1>
+        <h1>Total Score</h1>
+        <h1 className="score">{gameScore}</h1>
       </Container>
     </Style>
   );

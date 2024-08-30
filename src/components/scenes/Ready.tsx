@@ -40,7 +40,7 @@ const Ready = ({ gameRound, setGameScene }: GameProps) => {
     }, 3000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [setGameScene]);
 
   return (
     <Style>
