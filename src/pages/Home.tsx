@@ -60,7 +60,13 @@ const Home = () => {
   return (
     <Container onClick={getReady}>
       <Background>
-        {gameScene === "main" && <Main getReady={getReady} />}
+        {gameScene === "main" && (
+          <Main
+            getReady={getReady}
+            setGameRound={setGameRound}
+            setGameScore={setGameScore}
+          />
+        )}
         {gameScene === "ready" && (
           <Ready gameRound={gameRound} setGameScene={setGameScene} />
         )}

@@ -9,7 +9,9 @@ export type Stratagem = {
 
 export const getRandStratagems = (count: number) => {
   const stratagems = stratagemData as Stratagem[];
-  const filteredStratagems = stratagems.filter((stratagem) => stratagem.command !== "" && stratagem.path !== "");
+  const filteredStratagems = stratagems.filter(
+    (stratagem) => stratagem.command !== "" && stratagem.path !== ""
+  );
   const result: Stratagem[] = [];
   for (let i = 0; i < count; i++) {
     const rand = Math.floor(Math.random() * filteredStratagems.length);
@@ -40,3 +42,6 @@ export const getKeyDirection = (key: number) => {
       return "";
   }
 };
+
+// 배경음
+export const audioVolume = 0.3;

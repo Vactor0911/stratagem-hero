@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { color } from "../../theme";
 import { useEffect } from "react";
+import AudioPlayer from "../AudioPlayer";
+import { audioVolume } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -33,6 +35,7 @@ type GameProps = {
 };
 
 const Ready = ({ gameRound, setGameScene }: GameProps) => {
+  // 딜레이
   useEffect(() => {
     const timer = setTimeout(() => {
       setGameScene("game");
@@ -42,6 +45,12 @@ const Ready = ({ gameRound, setGameScene }: GameProps) => {
     return () => clearTimeout(timer);
   }, [setGameScene]);
 
+  // 배경음
+  useEffect(() => {
+    const audio = document.querySelector(".audio") as HTMLAudioElement;
+    audio.volume = audioVolume;
+  }, []);
+
   return (
     <Style>
       <h1>GET READY</h1>
@@ -49,6 +58,13 @@ const Ready = ({ gameRound, setGameScene }: GameProps) => {
         <h3>Round</h3>
         <h2>{gameRound}</h2>
       </div>
+      {/* 배경음 */}
+      {gameRound === 1 && (
+        <AudioPlayer src="./src/assets/sounds/game_start.ogg" />
+      )}
+      {gameRound !== 1 && (
+        <AudioPlayer src="./src/assets/sounds/level_start.ogg" />
+      )}
     </Style>
   );
 };

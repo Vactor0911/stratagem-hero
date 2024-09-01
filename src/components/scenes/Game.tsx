@@ -2,13 +2,14 @@ import styled from "styled-components";
 import { color } from "../../theme";
 import { useState, useEffect, useCallback } from "react";
 import { getKeyDirection, getRandStratagems, Stratagem } from "../../utils";
-// import ArrowUp from "../../assets/arrows/arrow_up.svg";
 import {
   ArrowUp,
   ArrowDown,
   ArrowLeft,
   ArrowRight,
 } from "../../components/Arrows";
+import AudioPlayer from "../AudioPlayer";
+import { audioVolume } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -245,6 +246,16 @@ const Style = styled.div`
   }
 `;
 
+/**
+ * 오디오를 재생합니다.
+ * @param audio 재생 할 HTML 오디오 요소
+ */
+const playAudio = (audio: HTMLAudioElement) => {
+  audio.pause();
+  audio.currentTime = 0;
+  audio.play();
+};
+
 type GameProps = {
   setGameScene: (scene: string) => void;
   gameRound: number;
@@ -292,6 +303,24 @@ const Game = ({
     return () => clearInterval(timer);
   }, [setGameScene, time, timePercentage]);
 
+  // 배경음
+  const [aryAudio, setAryAudio] = useState<HTMLAudioElement[]>([]);
+  useEffect(() => {
+    const audio = document.querySelector(".audio") as HTMLAudioElement;
+    audio.volume = audioVolume;
+
+    const audioInput = document.getElementById("input") as HTMLAudioElement;
+    const audioInputFailed = document.getElementById(
+      "input-failed"
+    ) as HTMLAudioElement;
+    const audioInputSuccess = document.getElementById(
+      "input-success"
+    ) as HTMLAudioElement;
+    const audios = [audioInput, audioInputFailed, audioInputSuccess];
+    audios.map((audio) => (audio.volume = audioVolume));
+    setAryAudio(audios);
+  }, []);
+
   // 스트라타젬
   const [stratagems, setStratagem] = useState(getRandStratagems(gameRound + 5));
 
@@ -303,13 +332,13 @@ const Game = ({
   // 스트라타젬 커맨드 입력
   const handleCmdInput = useCallback(
     (keyDirection: string) => {
-      console.log(keyDirection);
       if (keyDirection === stratagems[0].command[commandIndex]) {
         // 올바른 커맨드 입력
+        playAudio(aryAudio[0]);
         setCommandIndex((cmdIdx) => cmdIdx + 1);
-        console.log(commandIndex);
         if (commandIndex === stratagems[0].command.length - 1) {
           // 커맨드 입력 성공
+          playAudio(aryAudio[2]);
           setGameScore(
             Math.min(gameScore + stratagems[0].command.length * 5, MAX_SCORE)
           );
@@ -326,8 +355,12 @@ const Game = ({
             );
             setAryBonus([roundBonus, timeBonus, perfectBonus]);
             setGameRound(Math.min(gameRound + 1, MAX_ROUND));
-            setGameScene("clear");
-            return;
+
+            const delay = setTimeout(() => {
+              setGameScene("clear");
+              clearTimeout(delay);
+            }, 100);
+            return () => clearTimeout(delay);
           }
 
           // 다음 스트라타젬이 있다면
@@ -343,11 +376,13 @@ const Game = ({
         }
       } else {
         // 잘못된 커맨드 입력
+        playAudio(aryAudio[1]);
         setIsPerfect(false);
         setCommandIndex(0);
       }
     },
     [
+      aryAudio,
       commandIndex,
       countPerfect,
       gameRound,
@@ -361,6 +396,7 @@ const Game = ({
     ]
   );
 
+  // 키 입력 이벤트 핸들러
   const handleKeyDown = useCallback(
     (e: { keyCode: number }) => {
       const keyDirection = getKeyDirection(e.keyCode);
@@ -374,6 +410,7 @@ const Game = ({
     [handleCmdInput]
   );
 
+  // 키 입력 이벤트 리스너
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
 
@@ -452,13 +489,33 @@ const Game = ({
             {stratagems[0].command.split("").map((char, index) => {
               switch (char) {
                 case "U":
-                  return <ArrowUp color={(commandIndex > index ? color.yellow : "white")} key={index} />;
+                  return (
+                    <ArrowUp
+                      color={commandIndex > index ? color.yellow : "white"}
+                      key={index}
+                    />
+                  );
                 case "D":
-                  return <ArrowDown color={(commandIndex > index ? color.yellow : "white")} key={index} />;
+                  return (
+                    <ArrowDown
+                      color={commandIndex > index ? color.yellow : "white"}
+                      key={index}
+                    />
+                  );
                 case "L":
-                  return <ArrowLeft color={(commandIndex > index ? color.yellow : "white")} key={index} />;
+                  return (
+                    <ArrowLeft
+                      color={commandIndex > index ? color.yellow : "white"}
+                      key={index}
+                    />
+                  );
                 case "R":
-                  return <ArrowRight color={(commandIndex > index ? color.yellow : "white")} key={index} />;
+                  return (
+                    <ArrowRight
+                      color={commandIndex > index ? color.yellow : "white"}
+                      key={index}
+                    />
+                  );
               }
             })}
           </div>
@@ -501,6 +558,19 @@ const Game = ({
           />
         </div>
       </div>
+      {/* 배경음 */}
+      <AudioPlayer src="./src/assets/sounds/game.wav" loop={true} />
+      <audio className="audio" id="input" src="./src/assets/sounds/click.ogg" />
+      <audio
+        className="audio"
+        id="input-failed"
+        src="./src/assets/sounds/command_fail.ogg"
+      />
+      <audio
+        className="audio"
+        id="input-success"
+        src="./src/assets/sounds/command_success.ogg"
+      />
     </Style>
   );
 };

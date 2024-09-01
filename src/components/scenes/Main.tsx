@@ -26,9 +26,11 @@ const Style = styled.div`
 
 type GameProps = {
   getReady: () => void;
+  setGameRound: (round: number) => void;
+  setGameScore: (score: number) => void;
 };
 
-const Main = ({ getReady }: GameProps) => {
+const Main = ({ getReady, setGameRound, setGameScore }: GameProps) => {
   const handleKeyDown = (e: { keyCode: number }) => {
     if (getKeyDirection(e.keyCode)) {
       getReady();
@@ -37,11 +39,13 @@ const Main = ({ getReady }: GameProps) => {
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
+    setGameRound(1);
+    setGameScore(0);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, []);
+  }, [handleKeyDown, setGameRound, setGameScore]);
 
   return (
     <Style>

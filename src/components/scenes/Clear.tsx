@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { useState, useEffect, useRef } from "react";
 import { color } from "../../theme";
+import AudioPlayer from "../AudioPlayer";
+import { audioVolume } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -55,6 +57,12 @@ const Clear = ({ gameRound, setGameScene, gameScore, aryBonus }: GameProps) => {
     };
   }, [gameRound, loop, setGameScene]);
 
+  // 배경음
+  useEffect(() => {
+    const audio = document.querySelector(".audio") as HTMLAudioElement;
+    audio.volume = audioVolume;
+  }, []);
+
   return (
     <Style>
       <Container style={{ opacity: loop >= 1 ? "1" : "0" }}>
@@ -73,6 +81,18 @@ const Clear = ({ gameRound, setGameScene, gameScore, aryBonus }: GameProps) => {
         <h1>Total Score</h1>
         <h1 className="score">{gameScore}</h1>
       </Container>
+      {gameRound % 4 === 2 && (
+        <AudioPlayer src="./src/assets/sounds/level_end1.ogg" />
+      )}
+      {gameRound % 4 === 3 && (
+        <AudioPlayer src="./src/assets/sounds/level_end2.ogg" />
+      )}
+      {gameRound % 4 === 0 && (
+        <AudioPlayer src="./src/assets/sounds/level_end3.ogg" />
+      )}
+      {gameRound % 4 === 1 && (
+        <AudioPlayer src="./src/assets/sounds/level_end4.ogg" />
+      )}
     </Style>
   );
 };

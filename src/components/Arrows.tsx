@@ -6,8 +6,6 @@ type ArrowProps = {
 export const ArrowUp = ({ color, onClick }: ArrowProps) => {
   return (
     <svg
-      width="current"
-      height="current"
       viewBox="0 0 512 512"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -24,8 +22,6 @@ export const ArrowUp = ({ color, onClick }: ArrowProps) => {
 export const ArrowDown = ({ color, onClick }: ArrowProps) => {
   return (
     <svg
-      width="current"
-      height="current"
       viewBox="0 0 512 512"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -43,8 +39,6 @@ export const ArrowDown = ({ color, onClick }: ArrowProps) => {
 export const ArrowLeft = ({ color, onClick }: ArrowProps) => {
   return (
     <svg
-      width="current"
-      height="current"
       viewBox="0 0 512 512"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -62,8 +56,6 @@ export const ArrowLeft = ({ color, onClick }: ArrowProps) => {
 export const ArrowRight = ({ color, onClick }: ArrowProps) => {
   return (
     <svg
-      width="current"
-      height="current"
       viewBox="0 0 512 512"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
