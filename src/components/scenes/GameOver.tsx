@@ -1,6 +1,8 @@
 import styled from "styled-components";
 import { color } from "../../theme";
 import { useEffect } from "react";
+import AudioPlayer from "../AudioPlayer";
+import { audioVolume } from "../../utils";
 
 const Style = styled.div`
   display: flex;
@@ -37,9 +39,15 @@ const GameOver = ({ setGameScene, gameScore }: GameProps) => {
     const delay = setTimeout(() => {
       setGameScene("main");
       clearTimeout(delay);
-    }, 6000)
+    }, 8000);
 
     return () => clearTimeout(delay);
+  }, [setGameScene]);
+
+  // 배경음
+  useEffect(() => {
+    const audio = document.querySelector(".audio") as HTMLAudioElement;
+    audio.volume = audioVolume;
   }, []);
 
   return (
@@ -49,6 +57,7 @@ const GameOver = ({ setGameScene, gameScore }: GameProps) => {
         <h3>YOUR FINAL SCORE</h3>
         <h2>{gameScore}</h2>
       </div>
+      <AudioPlayer src="./src/assets/sounds/game_over.ogg" />
     </Style>
   );
 };
