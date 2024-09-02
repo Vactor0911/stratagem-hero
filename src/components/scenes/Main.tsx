@@ -31,13 +31,13 @@ type GameProps = {
 };
 
 const Main = ({ getReady, setGameRound, setGameScore }: GameProps) => {
-  const handleKeyDown = (e: { keyCode: number }) => {
-    if (getKeyDirection(e.keyCode)) {
-      getReady();
-    }
-  };
-
   useEffect(() => {
+    const handleKeyDown = (e: { keyCode: number }) => {
+      if (getKeyDirection(e.keyCode)) {
+        getReady();
+      }
+    };
+
     window.addEventListener("keydown", handleKeyDown);
     setGameRound(1);
     setGameScore(0);
@@ -45,7 +45,7 @@ const Main = ({ getReady, setGameRound, setGameScore }: GameProps) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleKeyDown, setGameRound, setGameScore]);
+  }, [getReady, setGameRound, setGameScore]);
 
   return (
     <Style>
