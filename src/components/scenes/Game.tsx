@@ -91,6 +91,7 @@ const Style = styled.div`
 
   #this-stratagem-icon {
     width: 15vw;
+    max-width: 256px;
     border: 5px solid ${color.yellow};
   }
 
@@ -104,6 +105,7 @@ const Style = styled.div`
 
   .next-stratagems img {
     width: 18%;
+    max-width: 128px;
   }
 
   .stratagem-name {
