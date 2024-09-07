@@ -7,11 +7,21 @@ export type Stratagem = {
   path: string;
 };
 
-export const getRandStratagems = (count: number) => {
+export const getStratagems = (filter: string = "") => {
   const stratagems = stratagemData as Stratagem[];
-  const filteredStratagems = stratagems.filter(
+  const validStratagems = stratagems.filter(
     (stratagem) => stratagem.command !== "" && stratagem.path !== ""
   );
+  const filteredStratagems = validStratagems.filter((stratagem) => (stratagem.category === filter || filter === ""));
+  return filteredStratagems;
+}
+
+export const getRandStratagems = (count: number = 1, filter: string = "") => {
+  const stratagems = stratagemData as Stratagem[];
+  const validStratagems = stratagems.filter(
+    (stratagem) => stratagem.command !== "" && stratagem.path !== ""
+  );
+  const filteredStratagems = validStratagems.filter((stratagem) => (stratagem.category === filter || filter === ""));
   const result: Stratagem[] = [];
   for (let i = 0; i < count; i++) {
     const rand = Math.floor(Math.random() * filteredStratagems.length);
