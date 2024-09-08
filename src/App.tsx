@@ -4,7 +4,7 @@ import { Home, Stratagems } from "./pages";
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/stratagem-hero">
       <Header />
       <Routes>
         <Route path="/" element={<Home />}></Route>
