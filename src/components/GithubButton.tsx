@@ -24,7 +24,7 @@ const GithubButton = () => {
       href="https://github.com/Vactor0911/stratagem-hero"
       target="_blank"
     >
-      <img src="./src/assets/github.svg" alt="github" height="30px"></img>
+      <img src="./github.svg" alt="github" height="30px"></img>
       <span>Github</span>
     </Container>
   );

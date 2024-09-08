@@ -60,10 +60,10 @@ const Ready = ({ gameRound, setGameScene }: GameProps) => {
       </div>
       {/* 배경음 */}
       {gameRound === 1 && (
-        <AudioPlayer src="./src/assets/sounds/game_start.ogg" />
+        <AudioPlayer src="./sounds/game_start.ogg" />
       )}
       {gameRound !== 1 && (
-        <AudioPlayer src="./src/assets/sounds/level_start.ogg" />
+        <AudioPlayer src="./sounds/level_start.ogg" />
       )}
     </Style>
   );

@@ -82,16 +82,16 @@ const Clear = ({ gameRound, setGameScene, gameScore, aryBonus }: GameProps) => {
         <h1 className="score">{gameScore}</h1>
       </Container>
       {gameRound % 4 === 2 && (
-        <AudioPlayer src="./src/assets/sounds/level_end1.ogg" />
+        <AudioPlayer src="./sounds/level_end1.ogg" />
       )}
       {gameRound % 4 === 3 && (
-        <AudioPlayer src="./src/assets/sounds/level_end2.ogg" />
+        <AudioPlayer src="./sounds/level_end2.ogg" />
       )}
       {gameRound % 4 === 0 && (
-        <AudioPlayer src="./src/assets/sounds/level_end3.ogg" />
+        <AudioPlayer src="./sounds/level_end3.ogg" />
       )}
       {gameRound % 4 === 1 && (
-        <AudioPlayer src="./src/assets/sounds/level_end4.ogg" />
+        <AudioPlayer src="./sounds/level_end4.ogg" />
       )}
     </Style>
   );

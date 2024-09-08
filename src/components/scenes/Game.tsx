@@ -446,7 +446,7 @@ const Game = ({
             <div className="stratagems">
               {/* 현재 스트라타젬 아이콘 */}
               <img
-                src={"./src/assets/stratagems/" + stratagems[0].path}
+                src={"./stratagems/" + stratagems[0].path}
                 alt={stratagems[0].name}
                 id="this-stratagem-icon"
                 style={{
@@ -466,7 +466,7 @@ const Game = ({
                   .map((stratagem, index) => {
                     return (
                       <img
-                        src={"./src/assets/stratagems/" + stratagem.path}
+                        src={"./stratagems/" + stratagem.path}
                         alt={stratagem.name ? stratagem.name : ""}
                         id={index >= 3 ? "rest-icons" : ""}
                         key={index}
@@ -561,17 +561,17 @@ const Game = ({
         </div>
       </div>
       {/* 배경음 */}
-      <AudioPlayer src="./src/assets/sounds/game.wav" loop={true} />
-      <audio className="audio" id="input" src="./src/assets/sounds/click.ogg" />
+      <AudioPlayer src="./sounds/game.wav" loop={true} />
+      <audio className="audio" id="input" src="./sounds/click.ogg" />
       <audio
         className="audio"
         id="input-failed"
-        src="./src/assets/sounds/command_fail.ogg"
+        src="./sounds/command_fail.ogg"
       />
       <audio
         className="audio"
         id="input-success"
-        src="./src/assets/sounds/command_success.ogg"
+        src="./sounds/command_success.ogg"
       />
     </Style>
   );

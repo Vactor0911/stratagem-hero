@@ -57,7 +57,7 @@ const GameOver = ({ setGameScene, gameScore }: GameProps) => {
         <h3>YOUR FINAL SCORE</h3>
         <h2>{gameScore}</h2>
       </div>
-      <AudioPlayer src="./src/assets/sounds/game_over.ogg" />
+      <AudioPlayer src="./sounds/game_over.ogg" />
     </Style>
   );
 };

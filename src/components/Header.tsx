@@ -111,7 +111,7 @@ const Header = () => {
     <header>
       <Style>
         <Link className="icon" to="/">
-          <img src="./src/assets/icon.png" height="50px"></img>
+          <img src="./icon.png" height="50px"></img>
         </Link>
         <div className="right-container">
           <GithubButton />

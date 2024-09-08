@@ -112,7 +112,7 @@ const getStratagemCard = (stratagem: StratagemType, color: string) => {
   return (
     <StratagemCard>
       <img
-        src={"./src/assets/stratagems/" + stratagem.path}
+        src={"./stratagems/" + stratagem.path}
         alt={stratagem.name}
       ></img>
       <div id="yellow-line" />

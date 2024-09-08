@@ -37,7 +37,7 @@ const Background = styled.div`
   text-align: center;
 
   /* background */
-  background-image: url("./src/assets/superEarthEmblem.svg");
+  background-image: url("./superEarthEmblem.svg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
