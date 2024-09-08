@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Header from "./components/Header.tsx";
-import { Home, HowToPlay, Stratagems } from "./pages";
+import { Home, Stratagems } from "./pages";
 
 function App() {
   return (
@@ -8,7 +8,6 @@ function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />}></Route>
-        <Route path="/how-to-play" element={<HowToPlay />}></Route>
         <Route path="/stratagems" element={<Stratagems />}></Route>
       </Routes>
     </BrowserRouter>

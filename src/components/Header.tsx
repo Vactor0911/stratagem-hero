@@ -138,9 +138,6 @@ const Header = () => {
             <NavLink to="/">Stratagem Hero</NavLink>
           </li>
           <li>
-            <NavLink to="how-to-play">How To Play</NavLink>
-          </li>
-          <li>
             <NavLink to="stratagems">Stratagems</NavLink>
           </li>
         </ul>
