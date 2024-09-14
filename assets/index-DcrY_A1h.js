@@ -512,12 +512,12 @@ Error generating stack: `+o.message+`
 
   // 모바일 가로 & 테블릿 세로
   @media all and (min-width: 480px) and (max-width: 767px) {
-    font-size: 0.5rem;
+    font-size: 0.4rem;
   }
 
   // 테블릿 가로
   @media all and (min-width: 768px) and (max-width: 1023px) {
-    font-size: 0.75rem;
+    font-size: 0.5rem;
   }
 `,Jv=ze.div`
   width: 100%;
